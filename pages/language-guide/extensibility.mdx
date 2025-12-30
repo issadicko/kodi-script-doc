@@ -1,0 +1,197 @@
+# 🔌 Extensibility
+
+KodiScript is designed to be **extensible**. You can enrich the language by adding your own native functions, allowing scripts to interact with your system while maintaining full control over what's exposed.
+
+## Why Extensibility?
+
+The built-in native functions cover common use cases, but your application likely has unique requirements:
+
+- **Database access**: Let scripts fetch users, orders, or any data
+- **Notifications**: Send emails, push notifications, SMS from scripts
+- **Business logic**: Calculate discounts, validate rules, process workflows
+- **External APIs**: Call third-party services securely
+- **File operations**: Read/write files with proper permissions
+
+## How It Works
+
+Each SDK provides a `registerFunction` method that lets you add custom functions callable from KodiScript:
+
+import { Tabs } from 'nextra/components'
+
+<Tabs items={['Kotlin', 'Go', 'Dart', 'TypeScript']}>
+  <Tabs.Tab>
+```kotlin
+val result = KodiScript.builder("""
+    let user = fetchUser(123)
+    let discount = calculateDiscount(user.tier, 100)
+    print("Discount: " + discount + "%")
+""")
+    .registerFunction("fetchUser") { args ->
+        // Call your database
+        mapOf("id" to args[0], "name" to "Alice", "tier" to "gold")
+    }
+    .registerFunction("calculateDiscount") { args ->
+        val tier = args[0] as String
+        when (tier) {
+            "gold" -> 20
+            "silver" -> 10
+            else -> 5
+        }
+    }
+    .execute()
+```
+  </Tabs.Tab>
+  <Tabs.Tab>
+```go
+script := kodi.New(`
+    let user = fetchUser(123)
+    let discount = calculateDiscount(user.tier, 100)
+    print("Discount: " + discount + "%")
+`)
+
+script.RegisterFunction("fetchUser", func(args ...interface{}) (interface{}, error) {
+    id := args[0].(float64)
+    return map[string]interface{}{
+        "id": id, "name": "Alice", "tier": "gold",
+    }, nil
+})
+
+script.RegisterFunction("calculateDiscount", func(args ...interface{}) (interface{}, error) {
+    tier := args[0].(string)
+    switch tier {
+    case "gold": return 20, nil
+    case "silver": return 10, nil
+    default: return 5, nil
+    }
+})
+
+result := script.Execute()
+```
+  </Tabs.Tab>
+  <Tabs.Tab>
+```dart
+final result = KodiScript.builder('''
+    let user = fetchUser(123)
+    let discount = calculateDiscount(user.tier, 100)
+    print("Discount: " + discount + "%")
+''')
+    .registerFunction('fetchUser', (args) {
+        // Call your database
+        return {'id': args[0], 'name': 'Alice', 'tier': 'gold'};
+    })
+    .registerFunction('calculateDiscount', (args) {
+        final tier = args[0] as String;
+        switch (tier) {
+            case 'gold': return 20;
+            case 'silver': return 10;
+            default: return 5;
+        }
+    })
+    .execute();
+```
+  </Tabs.Tab>
+  <Tabs.Tab>
+```typescript
+const result = KodiScript.builder(`
+    let user = fetchUser(123)
+    let discount = calculateDiscount(user.tier, 100)
+    print("Discount: " + discount + "%")
+`)
+    .registerFunction('fetchUser', (id) => {
+        // Call your database
+        return { id, name: 'Alice', tier: 'gold' };
+    })
+    .registerFunction('calculateDiscount', (tier, amount) => {
+        const discounts = { gold: 20, silver: 10, bronze: 5 };
+        return discounts[tier] || 0;
+    })
+    .execute();
+```
+  </Tabs.Tab>
+</Tabs>
+
+## Real-World Example: E-commerce Rules Engine
+
+Imagine letting your business team define discount rules without deploying code:
+
+```javascript
+// Script stored in database, editable by admins
+let user = getUser(userId)
+let cart = getCart(cartId)
+
+let discount = 0
+
+// Gold members get 20% off
+if (user.tier == "gold") {
+    discount = 20
+}
+
+// Extra 5% for orders over $100
+if (cart.total > 100) {
+    discount = discount + 5
+}
+
+// Holiday special
+if (isHolidaySeason()) {
+    discount = min(discount + 10, 50)  // Cap at 50%
+}
+
+// Apply and notify
+let finalPrice = cart.total * (1 - discount / 100)
+sendNotification(user.email, "Your discount: " + discount + "%")
+
+return { discount: discount, finalPrice: finalPrice }
+```
+
+Your backend exposes only the functions you choose:
+
+```kotlin
+KodiScript.builder(adminScript)
+    .withVariable("userId", request.userId)
+    .withVariable("cartId", request.cartId)
+    .registerFunction("getUser") { userService.findById(it[0] as Long) }
+    .registerFunction("getCart") { cartService.findById(it[0] as Long) }
+    .registerFunction("isHolidaySeason") { holidayService.isActive() }
+    .registerFunction("sendNotification") { notificationService.send(it[0], it[1]) }
+    .execute()
+```
+
+## Security Best Practices
+
+When exposing functions to scripts:
+
+1. **Validate inputs** - Never trust script arguments blindly
+2. **Limit scope** - Only expose what's necessary
+3. **Rate limit** - Prevent abuse of expensive operations
+4. **Audit logs** - Track what scripts execute
+5. **Sandbox** - Scripts can't access anything you don't explicitly provide
+
+```kotlin
+// ✅ Good: Scoped, validated function
+.registerFunction("getUser") { args ->
+    val id = (args[0] as? Number)?.toLong() 
+        ?: throw IllegalArgumentException("Invalid user ID")
+    userService.findById(id)?.toSafeMap() // Only expose safe fields
+}
+
+// ❌ Bad: Too permissive
+.registerFunction("query") { args ->
+    database.executeRaw(args[0] as String) // SQL injection risk!
+}
+```
+
+## Use Cases
+
+| Use Case | Custom Functions |
+|----------|-----------------|
+| **E-commerce** | `getUser`, `getCart`, `applyDiscount`, `sendEmail` |
+| **Workflow Engine** | `approve`, `reject`, `escalate`, `notify` |
+| **Data Processing** | `fetchRecord`, `transform`, `validate`, `save` |
+| **IoT/Automation** | `readSensor`, `setDevice`, `scheduleTask` |
+| **Gaming** | `getPlayer`, `giveReward`, `checkAchievement` |
+
+## Next Steps
+
+- Explore the [SDK Reference](/sdk-reference) for your platform
+- Check [Native Functions](/language-guide/native-functions) for built-in capabilities
+- See [Variables](/language-guide/variables) for injecting context
