@@ -1,0 +1,144 @@
+# Dart SDK
+
+KodiScript Dart SDK provides a lightweight, embeddable scripting language for Dart applications.
+
+## Installation
+
+Add to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  kodi_script: ^1.0.0
+```
+
+Then run:
+
+```bash
+dart pub get
+```
+
+## Quick Start
+
+```dart
+import 'package:kodi_script/kodi_script.dart';
+
+void main() {
+  // Simple evaluation
+  final result = KodiScript.eval('2 + 3 * 4');
+  print(result); // 14.0
+
+  // With variables
+  final greeting = KodiScript.run(
+    'greeting + ", " + name + "!"',
+    variables: {'greeting': 'Hello', 'name': 'World'},
+  );
+  print(greeting.value); // "Hello, World!"
+}
+```
+
+## API Reference
+
+### KodiScript.eval(source)
+
+Evaluates a script and returns the result value. Throws `KodiScriptException` on error.
+
+```dart
+final value = KodiScript.eval('10 + 5');
+print(value); // 15.0
+```
+
+### `KodiScript.run(source, variables)`
+
+Runs a script with optional variables and returns a `ScriptResult`.
+
+```dart
+final result = KodiScript.run(
+  'x * 2',
+  variables: {'x': 21},
+);
+print(result.value); // 42.0
+print(result.output); // print() output
+print(result.hasErrors); // false
+```
+
+### KodiScript.builder(source)
+
+Creates a builder for advanced configuration.
+
+```dart
+final result = KodiScript.builder('add(2, 3)')
+    .withVariable('multiplier', 10)
+    .registerFunction('add', (args) => 
+        (args[0] as double) + (args[1] as double))
+    .execute();
+```
+
+## Capturing Output
+
+```dart
+final result = KodiScript.run('''
+  let items = ["apple", "banana", "cherry"]
+  for (item in items) {
+    print(item)
+  }
+''');
+
+for (final line in result.output) {
+  print(line);
+}
+// apple
+// banana
+// cherry
+```
+
+## Custom Native Functions
+
+```dart
+final result = KodiScript.builder('greet("Dart")')
+    .registerFunction('greet', (args) => 'Hello, ${args[0]}!')
+    .execute();
+
+print(result.value); // "Hello, Dart!"
+```
+
+## Error Handling
+
+```dart
+try {
+  KodiScript.eval('1 / 0');
+} on KodiScriptException catch (e) {
+  print('Script error: ${e.errors}');
+}
+
+// Or use ScriptResult
+final result = KodiScript.run('undefined_var');
+if (result.hasErrors) {
+  print(result.errors);
+}
+```
+
+## Full Example
+
+```dart
+import 'package:kodi_script/kodi_script.dart';
+
+void main() {
+  final script = '''
+    let factorial = fn(n) {
+      if (n <= 1) {
+        return 1
+      }
+      return n * factorial(n - 1)
+    }
+    
+    let result = factorial(input)
+    print("Factorial of " + toString(input) + " is " + toString(result))
+    result
+  ''';
+
+  final result = KodiScript.run(script, variables: {'input': 5});
+  
+  print(result.output.first); // "Factorial of 5 is 120"
+  print(result.value); // 120.0
+}
+```

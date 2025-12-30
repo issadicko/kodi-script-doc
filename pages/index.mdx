@@ -1,0 +1,52 @@
+---
+title: KodiScript – Embeddable Scripting Language
+description: A lightweight, embeddable scripting language for Go and Kotlin designed for flexibility and ease of integration.
+---
+
+import { Cards, Pre, Code } from 'nextra/components'
+import Link from 'next/link'
+
+export const HeroSection = () => (
+  <div className="hero-container">
+    <h1 className="hero-title">
+      Embeddable Scripting<br />
+      for Modern Apps
+    </h1>
+    <div>
+      <span className="hero-subtitle">
+            KodiScript is a lightweight, strictly typed yet dynamic scripting language designed for Go and Kotlin applications.
+      </span>
+    </div>
+    <Link href="/getting-started" className="cta-button">
+      Get Started →
+    </Link>
+  </div>
+)
+
+<HeroSection />
+
+<div className="features-container">
+  <Cards>
+    <Cards.Card icon={<span className="text-2xl">⚡️</span>} title="Fast & Lightweight" href="/getting-started" />
+    <Cards.Card icon={<span className="text-2xl">🔧</span>} title="Dual SDK Support" href="/sdk-reference" />
+    <Cards.Card icon={<span className="text-2xl">📦</span>} title="Familiar Syntax" href="/language-guide" />
+    <Cards.Card icon={<span className="text-2xl">🛡️</span>} title="Safe & Secure" href="/language-guide" />
+  </Cards>
+</div>
+
+<h2>Code Example</h2>
+
+```javascript
+// Define a simple greeter function
+let name = "Developer"
+
+let greeter = fn(n) {
+    if (n == "") {
+        return "Hello, Stranger!"
+    }
+    return "Hello, ${n}!"
+}
+
+// Call the function
+print(greeter(name))
+```

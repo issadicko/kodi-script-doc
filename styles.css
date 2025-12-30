@@ -1,0 +1,98 @@
+/* Global Styles */
+@import 'nextra-theme-docs/style.css';
+
+:root {
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.nextra-nav-container .nextra-logo {
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+}
+
+/* Custom Card Styles for Landing Page */
+.features-container {
+    margin-top: 4rem;
+}
+
+.feature-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.2);
+}
+
+.dark .feature-card:hover {
+    box-shadow: 0 10px 30px -10px rgba(255, 255, 255, 0.1);
+}
+
+/* Hero Section Styles */
+.hero-container {
+    text-align: center;
+    padding: 4rem 0;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(145deg, #fff 30%, #a8a8a8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    /* Standard property for compatibility */
+}
+
+.dark .hero-title {
+    background: linear-gradient(145deg, #fff 30%, #a8a8a8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.light .hero-title {
+    background: linear-gradient(145deg, #000 30%, #666);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    color: #666;
+    max-width: 600px;
+    margin: 0 auto 2.5rem;
+}
+
+.dark .hero-subtitle {
+    color: #888;
+}
+
+.cta-button {
+    display: inline-block;
+    background: #0070f3;
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.cta-button:hover {
+    background: #0051a2;
+}
+
+h2{
+    margin-top: 1rem;
+}

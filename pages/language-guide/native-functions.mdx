@@ -1,0 +1,207 @@
+# Native Functions
+
+KodiScript provides a rich set of built-in functions that are available in both Go and Kotlin SDKs.
+
+## String Functions
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `toString` | `toString(value)` | Converts any value to its string representation |
+| `toNumber` | `toNumber(value)` | Converts a value to a number |
+| `length` | `length(str)` | Returns the length of a string |
+| `substring` | `substring(str, start, [end])` | Extracts a portion of a string |
+| `toUpperCase` | `toUpperCase(str)` | Converts string to uppercase |
+| `toLowerCase` | `toLowerCase(str)` | Converts string to lowercase |
+| `trim` | `trim(str)` | Removes whitespace from both ends |
+| `split` | `split(str, separator)` | Splits a string into an array |
+| `join` | `join(array, separator)` | Joins array elements into a string |
+| `replace` | `replace(str, old, new)` | Replaces all occurrences of a substring |
+| `contains` | `contains(str, substr)` | Checks if string contains a substring |
+| `startsWith` | `startsWith(str, prefix)` | Checks if string starts with prefix |
+| `endsWith` | `endsWith(str, suffix)` | Checks if string ends with suffix |
+| `indexOf` | `indexOf(str, substr)` | Returns index of first occurrence (-1 if not found) |
+
+### Examples
+
+```javascript
+let text = "  Hello, World!  "
+print(trim(text))           // "Hello, World!"
+print(toUpperCase("hello")) // "HELLO"
+print(split("a,b,c", ","))  // ["a", "b", "c"]
+print(contains("hello", "ell")) // true
+```
+
+---
+
+## Math Functions
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `abs` | `abs(n)` | Returns absolute value |
+| `floor` | `floor(n)` | Rounds down to nearest integer |
+| `ceil` | `ceil(n)` | Rounds up to nearest integer |
+| `round` | `round(n)` | Rounds to nearest integer |
+| `min` | `min(a, b, ...)` | Returns the smallest value |
+| `max` | `max(a, b, ...)` | Returns the largest value |
+| `pow` | `pow(base, exp)` | Returns base raised to the power of exp |
+| `sqrt` | `sqrt(n)` | Returns square root |
+| `sin` | `sin(n)` | Returns sine (n in radians) |
+| `cos` | `cos(n)` | Returns cosine (n in radians) |
+| `tan` | `tan(n)` | Returns tangent (n in radians) |
+| `log` | `log(n)` | Returns natural logarithm |
+| `log10` | `log10(n)` | Returns base-10 logarithm |
+| `exp` | `exp(n)` | Returns e raised to the power of n |
+
+### Examples
+
+```javascript
+print(abs(-5))        // 5
+print(floor(3.7))     // 3
+print(ceil(3.2))      // 4
+print(pow(2, 8))      // 256
+print(min(5, 3, 8))   // 3
+```
+
+---
+
+## Random Functions
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `random` | `random()` | Returns a random number between 0 and 1 |
+| `randomInt` | `randomInt(min, max)` | Returns a random integer in range [min, max] |
+| `randomUUID` | `randomUUID()` | Returns a random UUID v4 string |
+
+### Examples
+
+```javascript
+print(random())           // 0.742...
+print(randomInt(1, 100))  // 42
+print(randomUUID())       // "550e8400-e29b-41d4-a716-446655440000"
+```
+
+---
+
+## Type Functions
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `typeOf` | `typeOf(value)` | Returns type as string: "null", "string", "number", "boolean", "array", "object" |
+| `isNull` | `isNull(value)` | Returns true if value is null |
+| `isNumber` | `isNumber(value)` | Returns true if value is a number |
+| `isString` | `isString(value)` | Returns true if value is a string |
+| `isBool` | `isBool(value)` | Returns true if value is a boolean |
+
+### Examples
+
+```javascript
+print(typeOf(42))       // "number"
+print(typeOf("hello"))  // "string"
+print(isNull(null))     // true
+print(isNumber(3.14))   // true
+```
+
+---
+
+## Array Functions
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `size` | `size(array)` | Returns the number of elements |
+| `first` | `first(array)` | Returns the first element or null |
+| `last` | `last(array)` | Returns the last element or null |
+| `reverse` | `reverse(array)` | Returns a reversed copy of the array |
+| `slice` | `slice(array, start, [end])` | Returns a portion of the array |
+| `sort` | `sort(array, ["asc"\|"desc"])` | Returns a sorted copy (ascending by default) |
+| `sortBy` | `sortBy(array, field, ["asc"\|"desc"])` | Sorts array of objects by a field |
+
+### Examples
+
+```javascript
+let nums = [3, 1, 4, 1, 5]
+print(size(nums))       // 5
+print(first(nums))      // 3
+print(last(nums))       // 5
+print(sort(nums))       // [1, 1, 3, 4, 5]
+print(sort(nums, "desc")) // [5, 4, 3, 1, 1]
+print(reverse(nums))    // [5, 1, 4, 1, 3]
+```
+
+---
+
+## JSON Functions
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `jsonParse` | `jsonParse(str)` | Parses a JSON string into an object/array |
+| `jsonStringify` | `jsonStringify(value)` | Converts a value to JSON string |
+
+### Examples
+
+```javascript
+let obj = jsonParse('{"name": "Alice", "age": 30}')
+print(obj.name)  // "Alice"
+
+let arr = [1, 2, 3]
+print(jsonStringify(arr))  // "[1,2,3]"
+```
+
+---
+
+## Encoding Functions
+
+### Base64
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `base64Encode` | `base64Encode(str)` | Encodes string to Base64 |
+| `base64Decode` | `base64Decode(str)` | Decodes Base64 string |
+
+### URL
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `urlEncode` | `urlEncode(str)` | URL-encodes a string |
+| `urlDecode` | `urlDecode(str)` | Decodes a URL-encoded string |
+
+### Examples
+
+```javascript
+print(base64Encode("Hello"))  // "SGVsbG8="
+print(base64Decode("SGVsbG8="))  // "Hello"
+
+print(urlEncode("hello world"))  // "hello+world"
+print(urlDecode("hello+world"))  // "hello world"
+```
+
+---
+
+## Crypto/Hash Functions
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `md5` | `md5(str)` | Returns MD5 hash as hex string |
+| `sha1` | `sha1(str)` | Returns SHA-1 hash as hex string |
+| `sha256` | `sha256(str)` | Returns SHA-256 hash as hex string |
+
+### Examples
+
+```javascript
+print(md5("hello"))     // "5d41402abc4b2a76b9719d911017c592"
+print(sha256("hello"))  // "2cf24dba5fb0a30e26e83b2ac5b9e29e..."
+```
+
+---
+
+## Output Function
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `print` | `print(value, ...)` | Outputs values (captured by interpreter) |
+
+The `print` function is special - it doesn't return a value but captures output that can be retrieved from the interpreter after execution.
+
+```javascript
+print("Hello, World!")
+print("The answer is:", 42)
+```
