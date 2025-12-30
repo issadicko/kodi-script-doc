@@ -1,6 +1,7 @@
 export default {
     "index": "Overview",
-    "go": "Go SDK",
     "kotlin": "Kotlin SDK",
-    "dart": "Dart SDK"
+    "go": "Go SDK",
+    "dart": "Dart SDK",
+    "typescript": "TypeScript SDK"
 }

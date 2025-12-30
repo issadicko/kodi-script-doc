@@ -1,0 +1,149 @@
+# TypeScript SDK
+
+[![npm version](https://img.shields.io/npm/v/@issadicko/kodi-script)](https://www.npmjs.com/package/@issadicko/kodi-script)
+
+KodiScript TypeScript SDK provides a lightweight, embeddable scripting language for JavaScript/TypeScript applications.
+
+## Installation
+
+```bash
+npm install @issadicko/kodi-script
+# or
+yarn add @issadicko/kodi-script
+# or
+pnpm add @issadicko/kodi-script
+```
+
+## Quick Start
+
+```typescript
+import { KodiScript } from '@issadicko/kodi-script';
+
+const result = KodiScript.run(`
+  let name = "World"
+  print("Hello " + name)
+`);
+
+console.log(result.output); // ['Hello World']
+```
+
+## Variable Injection
+
+```typescript
+const result = KodiScript.run(`
+  let greeting = "Hello " + user.name
+  let status = user?.active ?: "offline"
+  print(greeting)
+`, {
+  user: { name: 'Alice', active: true }
+});
+```
+
+## Builder Pattern
+
+```typescript
+const result = KodiScript.builder(`
+  let greeting = customGreet("World")
+  print(greeting)
+`)
+  .withVariable('version', '1.0')
+  .registerFunction('customGreet', (name) => `Hello, ${name}!`)
+  .execute();
+```
+
+## API Reference
+
+### `KodiScript.run(source, variables?)`
+
+Runs a script with optional variables and returns a `ScriptResult`.
+
+```typescript
+interface ScriptResult {
+  output: string[];  // print() output
+  result: unknown;   // final expression value
+}
+```
+
+### `KodiScript.builder(source)`
+
+Creates a builder for advanced configuration.
+
+```typescript
+const result = KodiScript.builder('add(2, 3)')
+  .withVariable('multiplier', 10)
+  .withVariables({ x: 1, y: 2 })
+  .registerFunction('add', (a, b) => a + b)
+  .execute();
+```
+
+## Custom Functions
+
+```typescript
+const result = KodiScript.builder(`
+  let doubled = double(21)
+  let greeting = greet("TypeScript")
+  print(greeting + " - " + doubled)
+`)
+  .registerFunction('double', (n) => n * 2)
+  .registerFunction('greet', (name) => `Hello, ${name}!`)
+  .execute();
+
+console.log(result.output); // ['Hello, TypeScript! - 42']
+```
+
+## Express.js Integration
+
+```typescript
+import express from 'express';
+import { KodiScript } from '@issadicko/kodi-script';
+
+const app = express();
+app.use(express.json());
+
+app.post('/api/execute', (req, res) => {
+  const { script, variables } = req.body;
+  
+  try {
+    const result = KodiScript.run(script, variables);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.listen(3000);
+```
+
+## Browser Usage
+
+KodiScript works in the browser with any bundler:
+
+```html
+<script type="module">
+  import { KodiScript } from '@issadicko/kodi-script';
+  
+  const result = KodiScript.run(`
+    let x = 10
+    let y = 20
+    print(x + y)
+  `);
+  
+  console.log(result.output); // ['30']
+</script>
+```
+
+## TypeScript Support
+
+Full TypeScript definitions are included:
+
+```typescript
+import { KodiScript, ScriptResult, KodiScriptBuilder } from '@issadicko/kodi-script';
+
+const builder: KodiScriptBuilder = KodiScript.builder('1 + 2');
+const result: ScriptResult = builder.execute();
+```
+
+## Links
+
+- [GitHub Repository](https://github.com/issadicko/kodi-script-ts)
+- [npm](https://www.npmjs.com/package/@issadicko/kodi-script)
