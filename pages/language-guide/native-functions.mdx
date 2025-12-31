@@ -176,6 +176,54 @@ print(urlDecode("hello+world"))  // "hello world"
 
 ---
 
+## Date/Time Functions
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `now` | `now()` | Returns current timestamp in milliseconds |
+| `date` | `date()` | Returns current date as string (YYYY-MM-DD) |
+| `time` | `time()` | Returns current time as string (HH:MM:SS) |
+| `datetime` | `datetime()` | Returns current ISO 8601 datetime string |
+| `timestamp` | `timestamp([dateStr])` | Parses date string to timestamp, or returns current if no arg |
+| `formatDate` | `formatDate(ts, [format])` | Formats timestamp with pattern (YYYY, MM, DD, HH, mm, ss) |
+| `year` | `year([ts])` | Extracts year from timestamp (or current) |
+| `month` | `month([ts])` | Extracts month (1-12) from timestamp |
+| `day` | `day([ts])` | Extracts day of month from timestamp |
+| `hour` | `hour([ts])` | Extracts hour (0-23) from timestamp |
+| `minute` | `minute([ts])` | Extracts minute (0-59) from timestamp |
+| `second` | `second([ts])` | Extracts second (0-59) from timestamp |
+| `dayOfWeek` | `dayOfWeek([ts])` | Returns day of week (0=Sunday, 6=Saturday) |
+| `addDays` | `addDays(ts, days)` | Adds days to timestamp |
+| `addHours` | `addHours(ts, hours)` | Adds hours to timestamp |
+| `diffDays` | `diffDays(ts1, ts2)` | Returns difference in days between two timestamps |
+
+### Examples
+
+```javascript
+// Current date/time
+print(now())       // 1735638735000 (timestamp)
+print(date())      // "2024-12-31"
+print(time())      // "09:32:15"
+print(datetime())  // "2024-12-31T09:32:15.000Z"
+
+// Parse and format
+let ts = timestamp("2024-12-25")
+print(formatDate(ts, "DD/MM/YYYY"))  // "25/12/2024"
+
+// Extract components
+print(year())      // 2024
+print(month())     // 12
+print(day())       // 31
+print(dayOfWeek()) // 2 (Tuesday)
+
+// Date arithmetic
+let tomorrow = addDays(now(), 1)
+let nextWeek = addDays(now(), 7)
+let diff = diffDays(ts, now())  // Days since Christmas
+```
+
+---
+
 ## Crypto/Hash Functions
 
 | Function | Signature | Description |
