@@ -3,5 +3,6 @@ export default {
     "functions": "Functions",
     "control-flow": "Control Flow",
     "native-functions": "Native Functions",
-    "extensibility": "🔌 Extensibility"
+    "extensibility": "🔌 Extensibility",
+    "security": "Security & Limits"
 }

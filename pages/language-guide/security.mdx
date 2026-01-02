@@ -1,0 +1,85 @@
+# Security & Execution Limits
+
+KodiScript provides built-in mechanisms to protect your application from infinite loops, overly complex scripts, and long-running execution. This is essential when executing untrusted code or allowing user-defined scripts.
+
+## Instruction Counter (Max Operations)
+
+You can limit the number of operations (instructions) a script executes. This is a deterministic way to prevent infinite loops.
+
+### Usage
+
+<CodeGroup>
+```go
+// Go
+result := kodi.New(script).
+    WithMaxOperations(10000).
+    Execute()
+```
+
+```kotlin
+// Kotlin
+val result = KodiScript.builder(script)
+    .withMaxOperations(10000)
+    .execute()
+```
+
+```dart
+// Dart
+final result = KodiScript.builder(script)
+    .withMaxOperations(10000)
+    .execute();
+```
+
+```typescript
+// TypeScript
+const result = KodiScript.builder(script)
+    .withMaxOperations(10000)
+    .execute();
+```
+</CodeGroup>
+
+If the limit is exceeded, execution stops immediately and an error is returned (e.g., `MaxOperationsExceeded`).
+
+## Time-based Timeout
+
+You can also set a maximum duration for script execution. This is useful for ensuring latency SLAs.
+
+### Usage
+
+<CodeGroup>
+```go
+// Go
+result := kodi.New(script).
+    WithTimeout(5 * time.Second).
+    Execute()
+```
+
+```kotlin
+// Kotlin (milliseconds)
+val result = KodiScript.builder(script)
+    .withTimeout(5000)
+    .execute()
+```
+
+```dart
+// Dart
+final result = KodiScript.builder(script)
+    .withTimeout(Duration(seconds: 5))
+    .execute();
+```
+
+```typescript
+// TypeScript (milliseconds)
+const result = KodiScript.builder(script)
+    .withTimeout(5000)
+    .execute();
+```
+</CodeGroup>
+
+If the timeout is exceeded, execution stops and a `TimeoutError` (or equivalent) is returned.
+
+## Best Practices
+
+*   **Always set limits** when running untrusted code.
+*   **Combine both**: Use `maxOps` for deterministic protection against logic errors (loops) and `timeout` as a failsafe for heavy computation.
+*   **Handle errors**: Always check if the result contains errors indicating a limit was reached.
