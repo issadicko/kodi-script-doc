@@ -12,7 +12,7 @@ The built-in native functions cover common use cases, but your application likel
 - **External APIs**: Call third-party services securely
 - **File operations**: Read/write files with proper permissions
 
-## How It Works
+## Function Registration
 
 Each SDK provides a `registerFunction` method that lets you add custom functions callable from KodiScript:
 
@@ -109,6 +109,125 @@ const result = KodiScript.builder(`
 ```
   </Tabs.Tab>
 </Tabs>
+
+## Object Binding <span style={{background: '#10b981', color: 'white', padding: '2px 8px', borderRadius: '4px', fontSize: '12px', marginLeft: '8px'}}>v0.1.1</span>
+
+Starting from **version 0.1.1**, you can bind entire objects to the script context. This allows scripts to access properties and call methods on your native objects directly, without wrapping each method in a `registerFunction` call.
+
+<Tabs items={['Kotlin', 'Go', 'Dart', 'TypeScript']}>
+  <Tabs.Tab>
+```kotlin
+class UserService(private val db: Database) {
+    fun findUser(id: Int): User? = db.findUser(id)
+    fun createUser(name: String, email: String): User = db.createUser(name, email)
+    val userCount: Int get() = db.countUsers()
+}
+
+val service = UserService(myDatabase)
+
+val result = KodiScript.builder("""
+    let user = service.findUser(42)
+    let total = service.userCount
+    print("Found user: " + user.name)
+""")
+    .bind("service", service)  // Bind the entire object
+    .execute()
+```
+  </Tabs.Tab>
+  <Tabs.Tab>
+```go
+type UserService struct {
+    db *Database
+}
+
+func (s *UserService) FindUser(id int) *User {
+    return s.db.FindUser(id)
+}
+
+func (s *UserService) UserCount() int {
+    return s.db.CountUsers()
+}
+
+service := &UserService{db: myDatabase}
+
+script := kodi.New(`
+    let user = service.FindUser(42)
+    let total = service.UserCount()
+    print("Found user: " + user.Name)
+`)
+script.Bind("service", service)
+result := script.Execute()
+```
+  </Tabs.Tab>
+  <Tabs.Tab>
+```dart
+class UserService {
+  final Database db;
+  UserService(this.db);
+  
+  User? findUser(int id) => db.findUser(id);
+  User createUser(String name, String email) => db.createUser(name, email);
+  int get userCount => db.countUsers();
+}
+
+final service = UserService(myDatabase);
+
+final result = KodiScript.builder('''
+    let user = service.findUser(42)
+    let total = service.userCount
+    print("Found user: " + user.name)
+''')
+    .bind('service', service)
+    .execute();
+```
+  </Tabs.Tab>
+  <Tabs.Tab>
+```typescript
+class UserService {
+  constructor(private db: Database) {}
+  
+  findUser(id: number): User | null {
+    return this.db.findUser(id);
+  }
+  
+  createUser(name: string, email: string): User {
+    return this.db.createUser(name, email);
+  }
+  
+  get userCount(): number {
+    return this.db.countUsers();
+  }
+}
+
+const service = new UserService(myDatabase);
+
+const result = KodiScript.builder(`
+    let user = service.findUser(42)
+    let total = service.userCount
+    print("Found user: " + user.name)
+`)
+    .bind('service', service)
+    .execute();
+```
+  </Tabs.Tab>
+</Tabs>
+
+### When to Use `bind` vs `registerFunction`
+
+| Approach | Use Case |
+|----------|----------|
+| **`bind()`** | Expose an entire service or object with multiple methods/properties |
+| **`registerFunction()`** | Expose individual functions with custom logic or validation |
+
+You can combine both approaches:
+
+```kotlin
+KodiScript.builder(script)
+    .bind("userService", userService)
+    .bind("cartService", cartService)
+    .registerFunction("calculateTax") { args -> taxCalculator.compute(args) }
+    .execute()
+```
 
 ## Real-World Example: E-commerce Rules Engine
 

@@ -1,7 +1,7 @@
 import { useConfig } from 'nextra-theme-docs'
 
 export default {
-    logo: <img src="/logo.png" alt="KodiScript" style={{ height: '32px' }} />,
+    logo: <span className="logo-text">KODISCRIPT</span>,
     project: {
         link: 'https://github.com/kodi-script/kodi-script',
     },
