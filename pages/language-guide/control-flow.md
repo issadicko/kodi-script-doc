@@ -25,6 +25,22 @@ for (n in numbers) {
 }
 ```
 
+## While Loops
+
+Execute a block of code repeatedly while a condition is true:
+
+```javascript
+let i = 0
+let sum = 0
+while (i < 5) {
+    sum = sum + i
+    i = i + 1
+}
+print(sum)  // Output: 10
+```
+
+> **Safety Note:** While loops are protected by the operation limit. If a loop runs for too many iterations, execution will be terminated to prevent infinite loops. See [Security](/language-guide/security) for more details.
+
 ## Return Statements
 
 Functions can return values using `return`. If no return statement is found, the result of the last expression is returned (implicit return), but explicit `return` is supported for early exit.
