@@ -8,35 +8,38 @@ You can limit the number of operations (instructions) a script executes. This is
 
 ### Usage
 
-<CodeGroup>
+import { Tabs } from 'nextra/components'
+
+<Tabs items={['Go', 'Kotlin', 'Dart', 'TypeScript']}>
+<Tabs.Tab>
 ```go
-// Go
 result := kodi.New(script).
     WithMaxOperations(10000).
     Execute()
 ```
-
+</Tabs.Tab>
+<Tabs.Tab>
 ```kotlin
-// Kotlin
 val result = KodiScript.builder(script)
     .withMaxOperations(10000)
     .execute()
 ```
-
+</Tabs.Tab>
+<Tabs.Tab>
 ```dart
-// Dart
 final result = KodiScript.builder(script)
     .withMaxOperations(10000)
     .execute();
 ```
-
+</Tabs.Tab>
+<Tabs.Tab>
 ```typescript
-// TypeScript
 const result = KodiScript.builder(script)
     .withMaxOperations(10000)
     .execute();
 ```
-</CodeGroup>
+</Tabs.Tab>
+</Tabs>
 
 If the limit is exceeded, execution stops immediately and an error is returned (e.g., `MaxOperationsExceeded`).
 
@@ -46,35 +49,38 @@ You can also set a maximum duration for script execution. This is useful for ens
 
 ### Usage
 
-<CodeGroup>
+<Tabs items={['Go', 'Kotlin', 'Dart', 'TypeScript']}>
+<Tabs.Tab>
 ```go
-// Go
 result := kodi.New(script).
     WithTimeout(5 * time.Second).
     Execute()
 ```
-
+</Tabs.Tab>
+<Tabs.Tab>
 ```kotlin
-// Kotlin (milliseconds)
+// milliseconds
 val result = KodiScript.builder(script)
     .withTimeout(5000)
     .execute()
 ```
-
+</Tabs.Tab>
+<Tabs.Tab>
 ```dart
-// Dart
 final result = KodiScript.builder(script)
     .withTimeout(Duration(seconds: 5))
     .execute();
 ```
-
+</Tabs.Tab>
+<Tabs.Tab>
 ```typescript
-// TypeScript (milliseconds)
+// milliseconds
 const result = KodiScript.builder(script)
     .withTimeout(5000)
     .execute();
 ```
-</CodeGroup>
+</Tabs.Tab>
+</Tabs>
 
 If the timeout is exceeded, execution stops and a `TimeoutError` (or equivalent) is returned.
 
