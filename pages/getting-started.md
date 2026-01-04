@@ -69,3 +69,16 @@ import { KodiScript } from '@issadicko/kodi-script';
 const result = KodiScript.run('print("Hello from TypeScript!")');
 console.log(result.output[0]);
 ```
+
+### PHP SDK
+
+```bash
+composer require issadicko/kodi-script
+```
+
+```php
+use KodiScript\KodiScript;
+
+$result = KodiScript::run('print("Hello from PHP!")');
+echo $result->output[0];
+```
