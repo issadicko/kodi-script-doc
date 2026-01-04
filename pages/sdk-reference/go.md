@@ -5,7 +5,7 @@
 ## Installation
 
 ```bash
-go get github.com/issadicko/kodi-script-go@v0.0.1
+go get github.com/issadicko/kodi-script-go@v0.1.1
 ```
 
 ## Quick Start
