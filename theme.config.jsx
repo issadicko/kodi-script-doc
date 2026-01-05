@@ -25,7 +25,7 @@ export default {
             openGraph: {
                 type: 'website',
                 locale: 'en_US',
-                url: 'https://kodi-script.org',
+                url: 'https://docs-kodiscript.dickode.net',
                 site_name: 'KodiScript',
                 description: 'A lightweight, portable scripting language for embedding custom logic in your applications. Multi-platform SDKs for Go, Kotlin, Dart, TypeScript, and PHP.',
             },
@@ -44,7 +44,7 @@ export default {
             <meta name="author" content="Issa Dicko" />
             <meta property="og:title" content="KodiScript - Portable Embeddable Scripting Language" />
             <meta property="og:description" content="A lightweight, portable scripting language for embedding custom logic in your applications" />
-            <link rel="canonical" href="https://kodi-script.org" />
+            <link rel="canonical" href="https://docs-kodiscript.dickode.net" />
         </>
     ),
     sidebar: {
