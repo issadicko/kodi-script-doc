@@ -1,3 +1,8 @@
+---
+title: Getting Started with KodiScript
+description: Learn how to integrate KodiScript, the portable embeddable scripting language, into your Go, Kotlin, Dart, TypeScript, or PHP applications with our quick start guides.
+---
+
 # Getting Started
 
 ## Quick Start

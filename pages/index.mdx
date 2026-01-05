@@ -1,6 +1,6 @@
 ---
-title: KodiScript – Embeddable Scripting Language
-description: A lightweight, embeddable scripting language for Go and Kotlin designed for flexibility and ease of integration.
+title: KodiScript – Portable Embeddable Scripting Language
+description: A lightweight, portable scripting language for Go, Kotlin, TypeScript, Dart, and PHP. Embed custom logic safely with sandboxed execution and cross-platform support.
 ---
 
 import { Cards, Pre, Code } from 'nextra/components'
@@ -9,11 +9,11 @@ import Link from 'next/link'
 export const HeroSection = () => (
   <div className="hero-container">
     <h1 className="hero-title">
-      Embeddable Scripting<br />
+      Portable Scripting<br />
       for Modern Apps
     </h1>
     <p className="hero-subtitle">
-      KodiScript is a lightweight, extensible, and multi-platform scripting language.
+      KodiScript is a lightweight, embeddable scripting language with cross-platform SDKs for Go, Kotlin, TypeScript, Dart, and PHP.
     </p>
     <Link href="/getting-started" className="cta-button">
       Get Started →
@@ -23,16 +23,30 @@ export const HeroSection = () => (
 
 <HeroSection />
 
+## Why Choose KodiScript?
+
+KodiScript is designed for developers who need to **embed custom scripting logic** into their applications without the overhead of full-blown runtimes. Whether you're building a workflow engine, a rule-based system, or a user-customizable platform, KodiScript provides a **safe, sandboxed execution environment**.
+
 <div className="features-container">
   <Cards>
     <Cards.Card icon={<span className="text-2xl">⚡️</span>} title="Fast & Lightweight" href="/getting-started" />
     <Cards.Card icon={<span className="text-2xl">🔧</span>} title="Multi-Platform SDKs" href="/sdk-reference" />
     <Cards.Card icon={<span className="text-2xl">📦</span>} title="Familiar Syntax" href="/language-guide" />
-    <Cards.Card icon={<span className="text-2xl">🛡️</span>} title="Safe & Secure" href="/language-guide" />
+    <Cards.Card icon={<span className="text-2xl">🛡️</span>} title="Sandboxed Execution" href="/language-guide/security" />
   </Cards>
 </div>
 
-<h2>Code Example</h2>
+## Cross-Platform Script Interpreter
+
+Embed the same scripting language across your entire stack:
+
+- **Go** – Native SDK for backend services
+- **Kotlin** – JVM support for Android and server-side
+- **TypeScript** – Browser and Node.js environments
+- **Dart** – Flutter mobile and web applications
+- **PHP** – Web backends and CMS integrations
+
+## Code Example
 
 ```javascript
 // Define a simple greeter function
@@ -48,3 +62,12 @@ let greeter = fn(n) {
 // Call the function
 print(greeter(name))
 ```
+
+## Use Cases
+
+- **Workflow Engines** – Let users define custom automation logic
+- **Rule-Based Systems** – Configurable business rules
+- **Template Processing** – Dynamic content generation
+- **Game Scripting** – Modding and custom game logic
+- **API Transformations** – Transform data between services
+

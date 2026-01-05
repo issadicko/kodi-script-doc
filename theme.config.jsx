@@ -21,12 +21,13 @@ export default {
         const { frontMatter } = useConfig()
         return {
             titleTemplate: '%s – KodiScript',
-            description: frontMatter.description || 'KodiScript: The embeddable scripting language for Go and Kotlin.',
+            description: frontMatter.description || 'KodiScript: A lightweight, portable scripting language embeddable in Go, Kotlin, TypeScript, Dart, and PHP applications. Cross-platform script interpreter with sandboxed execution.',
             openGraph: {
                 type: 'website',
                 locale: 'en_US',
                 url: 'https://kodi-script.org',
                 site_name: 'KodiScript',
+                description: 'A lightweight, portable scripting language for embedding custom logic in your applications. Multi-platform SDKs for Go, Kotlin, Dart, TypeScript, and PHP.',
             },
             twitter: {
                 handle: '@kodiscript',
@@ -38,8 +39,12 @@ export default {
     head: (
         <>
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <meta name="description" content="KodiScript: The embeddable scripting language for Go and Kotlin." />
-            <meta name="og:title" content="KodiScript" />
+            <meta name="description" content="KodiScript: A lightweight, portable scripting language embeddable in Go, Kotlin, TypeScript, Dart, and PHP. Cross-platform script interpreter with sandboxed execution." />
+            <meta name="keywords" content="scripting language, embeddable script, portable language, cross-platform scripting, lightweight interpreter, sandboxed execution, Go scripting, Kotlin scripting, TypeScript scripting, Dart scripting, PHP scripting, DSL, domain specific language" />
+            <meta name="author" content="Issa Dicko" />
+            <meta property="og:title" content="KodiScript - Portable Embeddable Scripting Language" />
+            <meta property="og:description" content="A lightweight, portable scripting language for embedding custom logic in your applications" />
+            <link rel="canonical" href="https://kodi-script.org" />
         </>
     ),
     sidebar: {
