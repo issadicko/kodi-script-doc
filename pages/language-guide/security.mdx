@@ -10,7 +10,7 @@ You can limit the number of operations (instructions) a script executes. This is
 
 import { Tabs } from 'nextra/components'
 
-<Tabs items={['Go', 'Kotlin', 'Dart', 'TypeScript']}>
+<Tabs items={['Go', 'Kotlin', 'Dart', 'TypeScript', 'PHP']}>
 <Tabs.Tab>
 ```go
 result := kodi.New(script).
@@ -39,6 +39,13 @@ const result = KodiScript.builder(script)
     .execute();
 ```
 </Tabs.Tab>
+<Tabs.Tab>
+```php
+$result = KodiScript::builder($script)
+    ->withMaxOperations(10000)
+    ->execute();
+```
+</Tabs.Tab>
 </Tabs>
 
 If the limit is exceeded, execution stops immediately and an error is returned (e.g., `MaxOperationsExceeded`).
@@ -49,7 +56,7 @@ You can also set a maximum duration for script execution. This is useful for ens
 
 ### Usage
 
-<Tabs items={['Go', 'Kotlin', 'Dart', 'TypeScript']}>
+<Tabs items={['Go', 'Kotlin', 'Dart', 'TypeScript', 'PHP']}>
 <Tabs.Tab>
 ```go
 result := kodi.New(script).
@@ -78,6 +85,14 @@ final result = KodiScript.builder(script)
 const result = KodiScript.builder(script)
     .withTimeout(5000)
     .execute();
+```
+</Tabs.Tab>
+<Tabs.Tab>
+```php
+// milliseconds
+$result = KodiScript::builder($script)
+    ->withTimeout(5000)
+    ->execute();
 ```
 </Tabs.Tab>
 </Tabs>

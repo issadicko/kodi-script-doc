@@ -18,7 +18,7 @@ Each SDK provides a `registerFunction` method that lets you add custom functions
 
 import { Tabs } from 'nextra/components'
 
-<Tabs items={['Kotlin', 'Go', 'Dart', 'TypeScript']}>
+<Tabs items={['Kotlin', 'Go', 'Dart', 'TypeScript', 'PHP']}>
   <Tabs.Tab>
 ```kotlin
 val result = KodiScript.builder("""
@@ -108,13 +108,35 @@ const result = KodiScript.builder(`
     .execute();
 ```
   </Tabs.Tab>
+  <Tabs.Tab>
+```php
+$result = KodiScript::builder('
+    let user = fetchUser(123)
+    let discount = calculateDiscount(user.tier, 100)
+    print("Discount: " + discount + "%")
+')
+    ->registerFunction('fetchUser', fn($id) => [
+        'id' => $id,
+        'name' => 'Alice',
+        'tier' => 'gold',
+    ])
+    ->registerFunction('calculateDiscount', function($tier, $amount) {
+        return match($tier) {
+            'gold' => 20,
+            'silver' => 10,
+            default => 5,
+        };
+    })
+    ->execute();
+```
+  </Tabs.Tab>
 </Tabs>
 
 ## Object Binding <span style={{background: '#10b981', color: 'white', padding: '2px 8px', borderRadius: '4px', fontSize: '12px', marginLeft: '8px'}}>v0.1.1</span>
 
 Starting from **version 0.1.1**, you can bind entire objects to the script context. This allows scripts to access properties and call methods on your native objects directly, without wrapping each method in a `registerFunction` call.
 
-<Tabs items={['Kotlin', 'Go', 'Dart', 'TypeScript']}>
+<Tabs items={['Kotlin', 'Go', 'Dart', 'TypeScript', 'PHP']}>
   <Tabs.Tab>
 ```kotlin
 class UserService(private val db: Database) {
@@ -208,6 +230,35 @@ const result = KodiScript.builder(`
 `)
     .bind('service', service)
     .execute();
+```
+  </Tabs.Tab>
+  <Tabs.Tab>
+```php
+class UserService {
+    public function __construct(private Database $db) {}
+    
+    public function findUser(int $id): ?User {
+        return $this->db->findUser($id);
+    }
+    
+    public function createUser(string $name, string $email): User {
+        return $this->db->createUser($name, $email);
+    }
+    
+    public function getUserCount(): int {
+        return $this->db->countUsers();
+    }
+}
+
+$service = new UserService($myDatabase);
+
+$result = KodiScript::builder('
+    let user = service.findUser(42)
+    let total = service.getUserCount()
+    print("Found user: " + user.name)
+')
+    ->bind('service', $service)
+    ->execute();
 ```
   </Tabs.Tab>
 </Tabs>
