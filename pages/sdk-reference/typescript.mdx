@@ -58,15 +58,32 @@ const result = KodiScript.builder(`
 Runs a script with optional variables and returns a `ScriptResult`.
 
 ```typescript
+type ErrorKind = 'none' | 'parse' | 'runtime' | 'timeout' | 'max_operations';
+
 interface ScriptResult {
-  output: string[];  // print() output
-  result: unknown;   // final expression value
+  output: string[];    // print() output, in order
+  value: unknown;      // final expression value
+  errors: string[];    // error messages (empty on success)
+  errorKind: ErrorKind; // typed error category
 }
 ```
 
 ### `KodiScript.builder(source)`
 
-Creates a builder for advanced configuration.
+Creates a builder for advanced configuration. The builder methods are chainable:
+
+| Method | Description |
+|--------|-------------|
+| `.withVariable(name, value)` | Inject a single variable |
+| `.withVariables({ ... })` | Inject multiple variables |
+| `.registerFunction(name, fn)` | Register a custom native function |
+| `.bind(name, obj)` | Bind an object so scripts can call its methods/properties |
+| `.silentPrint(true)` | Capture `print()` output without writing to the console |
+| `.withOutput(sink)` | Route each `print()` line to a callback (still captured) |
+| `.withCache(true)` | Enable AST caching (on by default) |
+| `.withMaxOperations(n)` | Cap the number of operations |
+| `.withTimeout(ms)` | Cap wall-clock execution time |
+| `.execute()` | Run and return a `ScriptResult` |
 
 ```typescript
 const result = KodiScript.builder('add(2, 3)')
@@ -74,6 +91,32 @@ const result = KodiScript.builder('add(2, 3)')
   .withVariables({ x: 1, y: 2 })
   .registerFunction('add', (a, b) => a + b)
   .execute();
+```
+
+### Streaming output with `withOutput`
+
+Receive each printed line as it happens instead of reading `result.output` at the end:
+
+```typescript
+const lines: string[] = [];
+KodiScript.builder('print("a")\nprint("b")')
+  .withOutput(line => lines.push(line))
+  .execute();
+// lines === ['a', 'b']
+```
+
+### Handling errors by kind
+
+```typescript
+const result = KodiScript.builder(script).withMaxOperations(1000).execute();
+
+switch (result.errorKind) {
+  case 'none':           /* success */ break;
+  case 'parse':          /* syntax error */ break;
+  case 'runtime':        /* bad operation, undefined variable, recursion, ... */ break;
+  case 'timeout':        /* exceeded withTimeout */ break;
+  case 'max_operations': /* exceeded withMaxOperations */ break;
+}
 ```
 
 ## Custom Functions

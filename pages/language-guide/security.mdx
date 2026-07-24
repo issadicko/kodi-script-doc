@@ -99,8 +99,70 @@ $result = KodiScript::builder($script)
 
 If the timeout is exceeded, execution stops and a `TimeoutError` (or equivalent) is returned.
 
+## Recursion Guard <span style={{fontSize: '13px', fontWeight: 'normal', opacity: 0.6}}>Go · Kotlin · TypeScript</span>
+
+Deeply (or infinitely) recursive scripts are stopped before they can exhaust the host's native stack. Call depth is capped at **1000 frames**; exceeding it raises a runtime error (`maximum call depth exceeded`) that you can catch or inspect, instead of crashing the host process.
+
+```javascript
+fn loop() {
+    return loop()   // unbounded recursion
+}
+loop()   // -> runtime error: maximum call depth exceeded
+```
+
+## Safe Arithmetic <span style={{fontSize: '13px', fontWeight: 'normal', opacity: 0.6}}>Go · Kotlin · TypeScript</span>
+
+To keep behaviour deterministic and identical across these engines, invalid arithmetic raises a runtime error rather than producing `Infinity` or `NaN`:
+
+```javascript
+10 / 0    // -> runtime error: division by zero
+10 % 0    // -> runtime error: modulo by zero
+```
+
+Combine this with [`try`/`catch`](/language-guide/control-flow#try--catch) to recover gracefully.
+
+## Typed Error Kinds <span style={{fontSize: '13px', fontWeight: 'normal', opacity: 0.6}}>Go · Kotlin · TypeScript</span>
+
+Every result exposes an **error kind** so you can react programmatically instead of matching on message strings. The categories are:
+
+| Kind | Meaning |
+|------|---------|
+| `none` | Execution succeeded |
+| `parse` | The script failed to lex/parse |
+| `runtime` | A runtime error occurred (bad operation, undefined variable, recursion guard, …) |
+| `timeout` | The execution timeout was exceeded |
+| `max_operations` | The operation limit was exceeded |
+
+<Tabs items={['Go', 'Kotlin', 'TypeScript']}>
+<Tabs.Tab>
+```go
+result := kodi.New(script).WithMaxOperations(1000).Execute()
+if result.Kind == kodi.ErrorKindMaxOperations {
+    // handle the limit being hit
+}
+```
+</Tabs.Tab>
+<Tabs.Tab>
+```kotlin
+val result = KodiScript.builder(script).withMaxOperations(1000).execute()
+if (result.errorKind == ErrorKind.MAX_OPERATIONS) {
+    // handle the limit being hit
+}
+```
+</Tabs.Tab>
+<Tabs.Tab>
+```typescript
+const result = KodiScript.builder(script).withMaxOperations(1000).execute();
+if (result.errorKind === 'max_operations') {
+    // handle the limit being hit
+}
+```
+</Tabs.Tab>
+</Tabs>
+
 ## Best Practices
 
 *   **Always set limits** when running untrusted code.
 *   **Combine both**: Use `maxOps` for deterministic protection against logic errors (loops) and `timeout` as a failsafe for heavy computation.
-*   **Handle errors**: Always check if the result contains errors indicating a limit was reached.
+*   **Branch on the error kind**: Check `result.errorKind` / `result.Kind` rather than parsing error message text — it's stable across versions and engines.
+*   **Sandbox by default**: Scripts can only touch the variables and functions you explicitly inject. See [Extensibility](/language-guide/extensibility) for scoping guidance.

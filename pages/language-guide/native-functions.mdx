@@ -1,6 +1,10 @@
 # Native Functions
 
-KodiScript provides a rich set of built-in functions that are available in both Go and Kotlin SDKs.
+KodiScript provides a rich set of built-in functions with consistent names and behaviour across its SDKs.
+
+> **SDK availability:** The core library — string, math, array, type, JSON, encoding, date/time, and crypto functions — is available in **all** SDKs (Go, Kotlin, TypeScript, Dart, PHP). The **functional helpers, collection utilities, object functions, parsing, regex helpers, and method-call syntax** described below are currently implemented in the **Go, Kotlin, and TypeScript** SDKs, with Dart and PHP catching up. Sections that are Go/Kotlin/TypeScript-only are marked accordingly.
+
+> **Method-call syntax** <span style={{fontSize: '12px', opacity: 0.7}}>(Go · Kotlin · TypeScript)</span>**:** Any function whose first argument is the value it operates on can also be called as a method, and calls can be chained. `value.method(args)` is equivalent to `method(value, args)`. For example `"hello".toUpperCase()`, `[3, 1, 2].sort().join(",")`, or `nums.map(fn(x){ x * 2 })`. See [Functions](/language-guide/functions#method-call-syntax).
 
 ## String Functions
 
@@ -20,6 +24,9 @@ KodiScript provides a rich set of built-in functions that are available in both 
 | `startsWith` | `startsWith(str, prefix)` | Checks if string starts with prefix |
 | `endsWith` | `endsWith(str, suffix)` | Checks if string ends with suffix |
 | `indexOf` | `indexOf(str, substr)` | Returns index of first occurrence (-1 if not found) |
+| `repeat` | `repeat(str, count)` | Repeats a string `count` times |
+| `padLeft` | `padLeft(str, len, [pad])` | Pads the start of a string to `len` characters |
+| `padRight` | `padRight(str, len, [pad])` | Pads the end of a string to `len` characters |
 
 ### Examples
 
@@ -29,6 +36,8 @@ print(trim(text))           // "Hello, World!"
 print(toUpperCase("hello")) // "HELLO"
 print(split("a,b,c", ","))  // ["a", "b", "c"]
 print(contains("hello", "ell")) // true
+print(repeat("ab", 3))      // "ababab"
+print(padLeft("7", 3, "0")) // "007"
 ```
 
 ---
@@ -125,6 +134,118 @@ print(last(nums))       // 5
 print(sort(nums))       // [1, 1, 3, 4, 5]
 print(sort(nums, "desc")) // [5, 4, 3, 1, 1]
 print(reverse(nums))    // [5, 1, 4, 1, 3]
+```
+
+---
+
+## Functional Helpers <span style={{fontSize: '13px', fontWeight: 'normal', opacity: 0.6}}>Go · Kotlin · TypeScript</span>
+
+Higher-order functions that take a callback. Each also works with [method-call syntax](/language-guide/functions#method-call-syntax) (e.g. `nums.map(...)`). `map`, `filter`, `reduce`, and `find` are also available in the Dart and PHP SDKs.
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `map` | `map(array, fn)` | Transforms each element, returns a new array |
+| `filter` | `filter(array, fn)` | Keeps elements where `fn` returns truthy |
+| `reduce` | `reduce(array, fn, initial)` | Folds the array into a single value |
+| `find` | `find(array, fn)` | Returns the first matching element (or null) |
+| `findIndex` | `findIndex(array, fn)` | Returns the index of the first match (-1 if none) |
+| `some` | `some(array, fn)` | `true` if any element matches |
+| `every` | `every(array, fn)` | `true` if all elements match |
+| `flatMap` | `flatMap(array, fn)` | Maps each element to an array, then flattens one level |
+
+### Examples
+
+```javascript
+let nums = [1, 2, 3, 4, 5]
+print(nums.map(fn(x){ x * 2 }))          // [2, 4, 6, 8, 10]
+print(nums.filter(fn(x){ x % 2 == 0 }))  // [2, 4]
+print(reduce(nums, fn(acc, x){ acc + x }, 0))  // 15
+print(find(nums, fn(x){ x > 3 }))        // 4
+print(some(nums, fn(x){ x > 4 }))        // true
+print(every(nums, fn(x){ x > 0 }))       // true
+print(flatMap([1, 2], fn(x){ [x, x * 10] }))   // [1, 10, 2, 20]
+```
+
+---
+
+## Collection Utilities <span style={{fontSize: '13px', fontWeight: 'normal', opacity: 0.6}}>Go · Kotlin · TypeScript</span>
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `range` | `range(end)` / `range(start, end)` | Builds `[start, end)` as an array |
+| `sum` | `sum(array)` | Sum of all numbers |
+| `avg` | `avg(array)` | Average of all numbers |
+| `unique` | `unique(array)` | Removes duplicate values |
+| `flatten` | `flatten(array)` | Flattens nested arrays one level deep |
+| `push` | `push(array, item, ...)` | Returns a new array with items appended (non-mutating) |
+| `concat` | `concat(arr1, arr2, ...)` | Concatenates multiple arrays |
+
+### Examples
+
+```javascript
+print(range(5))              // [0, 1, 2, 3, 4]
+print(range(2, 5))           // [2, 3, 4]
+print(sum([1, 2, 3, 4, 5]))  // 15
+print(avg([1, 2, 3, 4, 5]))  // 3
+print(unique([1, 1, 2, 3, 3]))     // [1, 2, 3]
+print(flatten([[1, 2], [3, 4]]))   // [1, 2, 3, 4]
+print(push([1, 2], 3))       // [1, 2, 3]
+print(concat([1, 2], [3, 4]))      // [1, 2, 3, 4]
+```
+
+---
+
+## Object Functions <span style={{fontSize: '13px', fontWeight: 'normal', opacity: 0.6}}>Go · Kotlin · TypeScript</span>
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `keys` | `keys(object)` | Array of keys, sorted alphabetically |
+| `values` | `values(object)` | Array of values, ordered by sorted key |
+| `entries` | `entries(object)` | Array of `[key, value]` pairs, ordered by sorted key |
+| `has` | `has(object, key)` / `has(array, value)` | Checks key presence (objects) or membership (arrays) |
+
+### Examples
+
+```javascript
+let obj = {z: 1, a: 2, m: 3}
+print(keys(obj))       // [a, m, z]
+print(values(obj))     // [2, 3, 1]
+print(entries(obj))    // [[a, 2], [m, 3], [z, 1]]
+print(has(obj, "a"))   // true
+print(has([1, 2, 3], 3))   // true
+```
+
+---
+
+## Parsing Functions <span style={{fontSize: '13px', fontWeight: 'normal', opacity: 0.6}}>Go · Kotlin · TypeScript</span>
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `parseInt` | `parseInt(str)` | Parses a value into an integer (truncates) |
+| `parseFloat` | `parseFloat(str)` | Parses a value into a floating-point number |
+
+### Examples
+
+```javascript
+print(parseInt("99"))     // 99
+print(parseInt("3.9"))    // 3
+print(parseFloat("3.14")) // 3.14
+```
+
+---
+
+## Regex Functions <span style={{fontSize: '13px', fontWeight: 'normal', opacity: 0.6}}>Go · Kotlin · TypeScript</span>
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `regexMatch` | `regexMatch(str, pattern)` | Returns `true` if the pattern matches anywhere in the string |
+| `regexReplace` | `regexReplace(str, pattern, replacement)` | Replaces all matches of the pattern |
+
+### Examples
+
+```javascript
+print(regexMatch("order-123", "[0-9]+"))       // true
+print(regexReplace("a1b2c3", "[0-9]", "#"))     // "a#b#c#"
 ```
 
 ---

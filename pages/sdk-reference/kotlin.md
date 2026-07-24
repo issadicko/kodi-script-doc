@@ -91,6 +91,51 @@ class ScriptController(private val scriptService: ScriptService) {
 }
 ```
 
+## Result & Error Handling
+
+`execute()` returns a `ScriptResult`. Branch on the typed `errorKind` rather than parsing error strings:
+
+```kotlin
+data class ScriptResult(
+    val value: Any?,
+    val output: List<String>,
+    val errors: List<String>,
+    val errorKind: ErrorKind   // NONE on success
+)
+
+enum class ErrorKind { NONE, PARSE, RUNTIME, TIMEOUT, MAX_OPERATIONS }
+```
+
+```kotlin
+val result = KodiScript.builder(script)
+    .withMaxOperations(1000)
+    .execute()
+
+when (result.errorKind) {
+    ErrorKind.NONE -> useResult(result.value, result.output)
+    ErrorKind.PARSE -> /* syntax error */ Unit
+    ErrorKind.RUNTIME -> /* bad operation, undefined variable, recursion, ... */ Unit
+    ErrorKind.TIMEOUT -> /* exceeded withTimeout */ Unit
+    ErrorKind.MAX_OPERATIONS -> /* exceeded withMaxOperations */ Unit
+}
+```
+
+## Streaming & Capturing Output
+
+By default `print()` writes to stdout and is also captured in `result.output`. Use `withSilentPrint` to suppress the console write, or `withOutput` to route each line to a callback:
+
+```kotlin
+val lines = mutableListOf<String>()
+KodiScript.builder("""print("a") print("b")""")
+    .withOutput { line -> lines.add(line) }   // lines == ["a", "b"]
+    .execute()
+
+// Capture only, no console output:
+val result = KodiScript.builder(script)
+    .withSilentPrint(true)
+    .execute()
+```
+
 ## Links
 
 - [GitHub Repository](https://github.com/issadicko/kodi-script-kotlin)
