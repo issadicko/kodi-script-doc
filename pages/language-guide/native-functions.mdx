@@ -2,9 +2,7 @@
 
 KodiScript provides a rich set of built-in functions with consistent names and behaviour across its SDKs.
 
-> **SDK availability:** The core library — string, math, array, type, JSON, encoding, date/time, and crypto functions — is available in **all** SDKs (Go, Kotlin, TypeScript, Dart, PHP). The **functional helpers, collection utilities, object functions, parsing, regex helpers, and method-call syntax** described below are currently implemented in the **Go, Kotlin, and TypeScript** SDKs, with Dart and PHP catching up. Sections that are Go/Kotlin/TypeScript-only are marked accordingly.
-
-> **Method-call syntax** <span style={{fontSize: '12px', opacity: 0.7}}>(Go · Kotlin · TypeScript)</span>**:** Any function whose first argument is the value it operates on can also be called as a method, and calls can be chained. `value.method(args)` is equivalent to `method(value, args)`. For example `"hello".toUpperCase()`, `[3, 1, 2].sort().join(",")`, or `nums.map(fn(x){ x * 2 })`. See [Functions](/language-guide/functions#method-call-syntax).
+> **Method-call syntax:** Any function whose first argument is the value it operates on can also be called as a method, and calls can be chained. `value.method(args)` is equivalent to `method(value, args)`. For example `"hello".toUpperCase()`, `[3, 1, 2].sort().join(",")`, or `nums.map(fn(x){ x * 2 })`. See [Functions](/language-guide/functions#method-call-syntax).
 
 ## String Functions
 
@@ -138,9 +136,8 @@ print(reverse(nums))    // [5, 1, 4, 1, 3]
 
 ---
 
-## Functional Helpers <span style={{fontSize: '13px', fontWeight: 'normal', opacity: 0.6}}>Go · Kotlin · TypeScript</span>
-
-Higher-order functions that take a callback. Each also works with [method-call syntax](/language-guide/functions#method-call-syntax) (e.g. `nums.map(...)`). `map`, `filter`, `reduce`, and `find` are also available in the Dart and PHP SDKs.
+## Functional Helpers
+Higher-order functions that take a callback. Each also works with [method-call syntax](/language-guide/functions#method-call-syntax) (e.g. `nums.map(...)`).
 
 | Function | Signature | Description |
 |----------|-----------|-------------|
@@ -168,8 +165,7 @@ print(flatMap([1, 2], fn(x){ [x, x * 10] }))   // [1, 10, 2, 20]
 
 ---
 
-## Collection Utilities <span style={{fontSize: '13px', fontWeight: 'normal', opacity: 0.6}}>Go · Kotlin · TypeScript</span>
-
+## Collection Utilities
 | Function | Signature | Description |
 |----------|-----------|-------------|
 | `range` | `range(end)` / `range(start, end)` | Builds `[start, end)` as an array |
@@ -195,8 +191,7 @@ print(concat([1, 2], [3, 4]))      // [1, 2, 3, 4]
 
 ---
 
-## Object Functions <span style={{fontSize: '13px', fontWeight: 'normal', opacity: 0.6}}>Go · Kotlin · TypeScript</span>
-
+## Object Functions
 | Function | Signature | Description |
 |----------|-----------|-------------|
 | `keys` | `keys(object)` | Array of keys, sorted alphabetically |
@@ -217,8 +212,7 @@ print(has([1, 2, 3], 3))   // true
 
 ---
 
-## Parsing Functions <span style={{fontSize: '13px', fontWeight: 'normal', opacity: 0.6}}>Go · Kotlin · TypeScript</span>
-
+## Parsing Functions
 | Function | Signature | Description |
 |----------|-----------|-------------|
 | `parseInt` | `parseInt(str)` | Parses a value into an integer (truncates) |
@@ -234,8 +228,7 @@ print(parseFloat("3.14")) // 3.14
 
 ---
 
-## Regex Functions <span style={{fontSize: '13px', fontWeight: 'normal', opacity: 0.6}}>Go · Kotlin · TypeScript</span>
-
+## Regex Functions
 | Function | Signature | Description |
 |----------|-----------|-------------|
 | `regexMatch` | `regexMatch(str, pattern)` | Returns `true` if the pattern matches anywhere in the string |

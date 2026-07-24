@@ -72,6 +72,7 @@ $result = KodiScript::builder('greet("PHP")')
 | `withVariables(array)` | Add multiple variables |
 | `registerFunction(name, fn)` | Register a custom function |
 | `bind(name, object)` | Bind an object to the script |
+| `withOutput(callable)` | Route each `print()` line to a callback (still captured) |
 | `withMaxOperations(n)` | Limit max operations (loop protection) |
 | `withTimeout(ms)` | Set execution timeout in milliseconds |
 
@@ -98,12 +99,19 @@ The PHP SDK includes 50+ native functions:
 |----------|-----------|
 | String | `toString`, `length`, `substring`, `toUpperCase`, `toLowerCase`, `trim`, `split`, `join`, `replace`, `contains`, `startsWith`, `endsWith`, `indexOf`, `repeat`, `padLeft`, `padRight` |
 | Math | `abs`, `floor`, `ceil`, `round`, `min`, `max`, `pow`, `sqrt`, `sin`, `cos`, `tan`, `log`, `exp` |
-| Array | `size`, `first`, `last`, `reverse`, `slice`, `sort`, `sortBy`, `filter`, `map`, `reduce`, `find`, `findIndex` |
+| Array | `size`, `first`, `last`, `reverse`, `slice`, `sort`, `sortBy` |
+| Functional | `map`, `filter`, `reduce`, `find`, `findIndex`, `some`, `every`, `flatMap` |
+| Collection | `range`, `sum`, `avg`, `unique`, `flatten`, `push`, `concat` |
+| Object | `keys`, `values`, `entries`, `has` |
+| Parsing | `parseInt`, `parseFloat` |
+| Regex | `regexMatch`, `regexReplace` |
 | Type | `typeOf`, `isNull`, `isNumber`, `isString`, `isBool` |
 | JSON | `jsonParse`, `jsonStringify` |
 | Encoding | `base64Encode`, `base64Decode`, `urlEncode`, `urlDecode` |
 | Crypto | `md5`, `sha1`, `sha256` |
 | Date/Time | `now`, `date`, `time`, `datetime`, `timestamp`, `formatDate`, `year`, `month`, `day`, `hour`, `minute`, `second` |
+
+These work with method-call syntax too — `[1,2,3]->map(...)` is written `[1,2,3].map(...)` in a script. See [Native Functions](/language-guide/native-functions) for full signatures.
 
 ## Error Handling
 
@@ -115,6 +123,22 @@ if ($result->hasErrors()) {
         echo "Error: $error\n";
     }
 }
+```
+
+Branch on the typed `kind` (an `ErrorKind` enum) instead of parsing error strings:
+
+```php
+use KodiScript\ErrorKind;
+
+$result = KodiScript::builder($script)->withMaxOperations(1000)->execute();
+
+match ($result->kind) {
+    ErrorKind::None          => handleSuccess($result->value),
+    ErrorKind::Parse         => /* syntax error */ null,
+    ErrorKind::Runtime       => /* bad operation, undefined variable, recursion, ... */ null,
+    ErrorKind::Timeout       => /* exceeded withTimeout */ null,
+    ErrorKind::MaxOperations => /* exceeded withMaxOperations */ null,
+};
 ```
 
 ## Requirements

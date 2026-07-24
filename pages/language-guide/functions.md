@@ -12,8 +12,7 @@ let add = fn(x, y) {
 }
 ```
 
-## Named Function Declarations <span style={{fontSize: '13px', fontWeight: 'normal', opacity: 0.6}}>Go · Kotlin · TypeScript</span>
-
+## Named Function Declarations
 You can also declare a named function directly. This is equivalent to the `let` form but reads more naturally, and named functions can be referenced before they appear (handy for recursion):
 
 ```javascript
@@ -54,7 +53,7 @@ let double = fn(x) { x * 2 }
 print(apply(double, 10)) // Output: 20
 ```
 
-KodiScript ships with a full set of built-in higher-order helpers for collections. `map`, `filter`, `reduce`, and `find` are available in every SDK; `findIndex`, `some`, `every`, and `flatMap` are currently in the Go, Kotlin, and TypeScript SDKs:
+KodiScript ships with a full set of built-in higher-order helpers for collections — `map`, `filter`, `reduce`, `find`, `findIndex`, `some`, `every`, and `flatMap`:
 
 ```javascript
 let nums = [1, 2, 3, 4, 5]
@@ -68,8 +67,7 @@ print(every(nums, fn(x){ x > 0 }))      // true
 print(flatMap([1, 2], fn(x){ [x, x * 10] }))   // [1, 10, 2, 20]
 ```
 
-## Method-Call Syntax <span style={{fontSize: '13px', fontWeight: 'normal', opacity: 0.6}}>Go · Kotlin · TypeScript</span>
-
+## Method-Call Syntax
 Any built-in function whose first argument is the "receiver" can be called with method syntax, and calls can be chained. `value.method(args)` is equivalent to `method(value, args)`:
 
 ```javascript
@@ -81,8 +79,7 @@ print([1, 1, 2, 3].unique().sum())              // 6
 
 This works for the full [native function](/language-guide/native-functions) library — string helpers, array helpers, and the higher-order functions above.
 
-## Spread Arguments <span style={{fontSize: '13px', fontWeight: 'normal', opacity: 0.6}}>Go · Kotlin · TypeScript</span>
-
+## Spread Arguments
 Use the [spread operator](/language-guide/operators#spread) to expand an array into a function's argument list:
 
 ```javascript

@@ -28,7 +28,7 @@ count += 1   // 6
 
 ### Number Formatting
 
-Numbers are stored as 64-bit floats. In the Go, Kotlin, and TypeScript SDKs, whole numbers print **without** a trailing `.0` — part of a canonical output format that makes the same script print byte-for-byte identically across those three engines:
+Numbers are stored as 64-bit floats, but whole numbers print **without** a trailing `.0` — part of a canonical output format that makes the same script print byte-for-byte identically across every SDK:
 
 ```javascript
 print(42)       // 42     (not 42.0)
@@ -44,7 +44,7 @@ Strings can be written with three interchangeable delimiters — pick whichever 
 ```javascript
 let a = "double quotes"
 let b = 'single quotes'
-let c = `backticks`     // Go, Kotlin, and TypeScript SDKs
+let c = `backticks`
 ```
 
 ### String Templates
@@ -86,7 +86,7 @@ print(person.age)
 print({b: 2, a: 1})   // {a: 1, b: 2}
 ```
 
-## Destructuring <span style={{fontSize: '13px', fontWeight: 'normal', opacity: 0.6}}>Go · Kotlin · TypeScript</span>
+## Destructuring
 
 Unpack arrays and objects into individual variables in a single `let` statement.
 

@@ -2,8 +2,6 @@
 
 KodiScript supports a familiar set of operators for arithmetic, comparison, logic, assignment, and null-safety.
 
-> **SDK availability:** Arithmetic, comparison, logical, and null-safety operators are available in every SDK. **Compound assignment (`+=`, …), increment/decrement (`++`/`--`), the ternary operator, and spread (`...`)** are currently implemented in the **Go, Kotlin, and TypeScript** SDKs.
-
 ## Arithmetic
 
 | Operator | Description | Example | Result |
@@ -19,7 +17,7 @@ print(10 + 2 * 3 - 4 / 2)   // 14  (standard precedence)
 print("Hello " + "World")   // Hello World
 ```
 
-> **Division by zero** raises a runtime error (`division by zero` / `modulo by zero`) rather than returning `Infinity` or `NaN`, in the Go, Kotlin, and TypeScript SDKs.
+> **Division by zero** raises a runtime error (`division by zero` / `modulo by zero`) rather than returning `Infinity` or `NaN`. This keeps behaviour identical across every SDK.
 
 ## Comparison
 

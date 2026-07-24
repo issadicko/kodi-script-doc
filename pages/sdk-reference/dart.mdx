@@ -93,6 +93,16 @@ for (final line in result.output) {
 // cherry
 ```
 
+Or stream each `print()` line to a callback as it happens with `withOutput` (output is still captured in `result.output`):
+
+```dart
+final lines = <String>[];
+KodiScript.builder('print("a")\nprint("b")')
+    .withOutput((line) => lines.add(line))
+    .execute();
+// lines == ['a', 'b']
+```
+
 ## Custom Native Functions
 
 ```dart
@@ -116,6 +126,20 @@ try {
 final result = KodiScript.run('undefined_var');
 if (result.hasErrors) {
   print(result.errors);
+}
+```
+
+Branch on the typed `errorKind` instead of parsing error strings:
+
+```dart
+final result = KodiScript.builder(script).withMaxOperations(1000).execute();
+
+switch (result.errorKind) {
+  case ErrorKind.none:          // success
+  case ErrorKind.parse:         // syntax error
+  case ErrorKind.runtime:       // bad operation, undefined variable, recursion, ...
+  case ErrorKind.timeout:       // exceeded withTimeout
+  case ErrorKind.maxOperations: // exceeded withMaxOperations
 }
 ```
 

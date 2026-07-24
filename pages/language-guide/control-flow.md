@@ -49,8 +49,6 @@ print(sum)  // Output: 10
 
 ## Break & Continue
 
-> **Availability:** `break` is supported in every SDK; `continue` is currently implemented in the Go, Kotlin, and TypeScript SDKs.
-
 Inside `for` and `while` loops, `break` exits the loop immediately and `continue` skips to the next iteration:
 
 ```javascript
@@ -76,7 +74,7 @@ let check = fn(x) {
 }
 ```
 
-## Try / Catch <span style={{fontSize: '13px', fontWeight: 'normal', opacity: 0.6}}>Go · Kotlin · TypeScript</span>
+## Try / Catch
 
 Wrap code that might fail in a `try` block and handle the failure in `catch`. The caught error is bound to the name you provide in parentheses:
 
@@ -105,4 +103,4 @@ try {
 print(captured)   // caught
 ```
 
-> **Portability note:** The error value bound in `catch` carries a human-readable message. On the Go and Kotlin engines the message includes the source position (`line X, col Y: ...`); the TypeScript engine reports the same message text without the position prefix. If you need identical output across every engine, avoid printing the raw error and emit a fixed marker instead (as shown above).
+> **Portability note:** The error value bound in `catch` carries a human-readable message. The exact text — in particular whether it is prefixed with a source position like `line X, col Y:` — can vary between SDKs. If you need byte-identical output across every engine, avoid printing the raw error and emit a fixed marker instead (as shown above).
