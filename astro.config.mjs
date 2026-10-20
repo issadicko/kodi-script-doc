@@ -25,6 +25,8 @@ export default defineConfig({
       description: DESCRIPTION,
       titleDelimiter: '–',
       favicon: '/favicon.svg',
+      // The 404 page is src/pages/404.astro.
+      disable404Route: true,
       social: [
         {
           icon: 'github',

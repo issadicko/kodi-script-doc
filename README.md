@@ -27,6 +27,7 @@ npm run check     # astro check: types, content frontmatter, components
 | `src/components/Install.astro` | Install command of an SDK, built from `versions.ts`. |
 | `src/components/Showcase.astro`, `FeatureGrid.astro` | Home page: script next to its result, feature grid. |
 | `src/pages/playground.astro` | The Playground, a full-screen page of its own (outside the docs layout), served at `/playground/`. |
+| `src/pages/404.astro` | The 404 page. Starlight's own 404 route is disabled (`disable404Route`), see the file header. |
 | `src/playground/` | Playground code: `app.ts` (layout, editor, run), `kodi-language.ts` (CodeMirror mode), `examples.ts`, `natives.ts` (Explorer data), `result.ts`, `share.ts`, `home.ts` (showcase script). |
 | `src/grammars/kodi.tmLanguage.json` | TextMate grammar of the `kodi` language, registered in Expressive Code. Use ```` ```kodi ```` for KodiScript samples. |
 | `public/` | Static files: favicon, logo, social image. |

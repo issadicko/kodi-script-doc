@@ -1,0 +1,18 @@
+---
+/**
+ * 404 page. Starlight's own 404 route looks up a `404` docs entry and warns when there is none,
+ * while a `404.md` docs entry also collides with the `/404` route: `disable404Route` is set in
+ * `astro.config.mjs` and the page is rendered here instead.
+ */
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+---
+
+<StarlightPage
+  frontmatter={{
+    title: '404',
+    template: 'splash',
+    editUrl: false,
+    pagefind: false,
+    hero: { tagline: Astro.locals.t('404.text') },
+  }}
+/>
