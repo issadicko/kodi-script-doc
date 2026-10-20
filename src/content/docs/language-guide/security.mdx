@@ -1,0 +1,185 @@
+---
+title: Security & Limits
+description: "Protect your application from runaway scripts with operation limits, timeouts, a recursion guard, safe arithmetic, and typed error kinds."
+---
+
+import { TabItem, Tabs } from '@astrojs/starlight/components';
+
+KodiScript provides built-in mechanisms to protect your application from infinite loops, overly complex scripts, and long-running execution. This is essential when executing untrusted code or allowing user-defined scripts.
+
+A script can only reach the variables and functions you inject: there is no file, network, or process access unless you register a function that does it. See [Extensibility](/language-guide/extensibility/) for scoping guidance.
+
+## Instruction Counter (Max Operations)
+
+You can limit the number of operations (instructions) a script executes. This is a deterministic way to prevent infinite loops.
+
+<Tabs syncKey="sdk">
+  <TabItem label="Go">
+```go
+result := kodi.New(script).
+    WithMaxOperations(10000).
+    Execute()
+```
+  </TabItem>
+  <TabItem label="Kotlin">
+```kotlin
+val result = KodiScript.builder(script)
+    .withMaxOperations(10000)
+    .execute()
+```
+  </TabItem>
+  <TabItem label="TypeScript">
+```typescript
+const result = KodiScript.builder(script)
+    .withMaxOperations(10000)
+    .execute();
+```
+  </TabItem>
+  <TabItem label="Dart">
+```dart
+final result = KodiScript.builder(script)
+    .withMaxOperations(10000)
+    .execute();
+```
+  </TabItem>
+  <TabItem label="PHP">
+```php
+$result = KodiScript::builder($script)
+    ->withMaxOperations(10000)
+    ->execute();
+```
+  </TabItem>
+</Tabs>
+
+If the limit is exceeded, execution stops immediately and the result carries the `max_operations` [error kind](#typed-error-kinds).
+
+## Time-based Timeout
+
+You can also set a maximum duration for script execution. This is useful for ensuring latency SLAs.
+
+<Tabs syncKey="sdk">
+  <TabItem label="Go">
+```go
+result := kodi.New(script).
+    WithTimeout(5 * time.Second).
+    Execute()
+```
+  </TabItem>
+  <TabItem label="Kotlin">
+```kotlin
+// milliseconds
+val result = KodiScript.builder(script)
+    .withTimeout(5000)
+    .execute()
+```
+  </TabItem>
+  <TabItem label="TypeScript">
+```typescript
+// milliseconds
+const result = KodiScript.builder(script)
+    .withTimeout(5000)
+    .execute();
+```
+  </TabItem>
+  <TabItem label="Dart">
+```dart
+final result = KodiScript.builder(script)
+    .withTimeout(Duration(seconds: 5))
+    .execute();
+```
+  </TabItem>
+  <TabItem label="PHP">
+```php
+// milliseconds
+$result = KodiScript::builder($script)
+    ->withTimeout(5000)
+    ->execute();
+```
+  </TabItem>
+</Tabs>
+
+If the timeout is exceeded, execution stops and the result carries the `timeout` error kind.
+
+## Recursion Guard
+
+Deeply (or infinitely) recursive scripts are stopped before they can exhaust the host's native stack. Call depth is capped at **1000 frames**; exceeding it raises a runtime error (`maximum call depth exceeded`) that you can catch or inspect, instead of crashing the host process.
+
+```kodi
+fn loop() {
+    return loop()   // unbounded recursion
+}
+loop()   // -> runtime error: maximum call depth exceeded
+```
+
+## Safe Arithmetic
+
+To keep behaviour deterministic and identical across engines, invalid arithmetic raises a runtime error rather than producing `Infinity` or `NaN`:
+
+```kodi
+10 / 0    // -> runtime error: division by zero
+10 % 0    // -> runtime error: modulo by zero
+```
+
+Combine this with [`try`/`catch`](/language-guide/control-flow/#try--catch) to recover gracefully.
+
+## Typed Error Kinds
+
+Every result exposes an **error kind** so you can react programmatically instead of matching on message strings. The categories are:
+
+| Kind | Meaning |
+|------|---------|
+| `none` | Execution succeeded |
+| `parse` | The script failed to lex/parse |
+| `runtime` | A runtime error occurred (bad operation, undefined variable, recursion guard, …) |
+| `timeout` | The execution timeout was exceeded |
+| `max_operations` | The operation limit was exceeded |
+
+<Tabs syncKey="sdk">
+  <TabItem label="Go">
+```go
+result := kodi.New(script).WithMaxOperations(1000).Execute()
+if result.Kind == kodi.ErrorKindMaxOperations {
+    // handle the limit being hit
+}
+```
+  </TabItem>
+  <TabItem label="Kotlin">
+```kotlin
+val result = KodiScript.builder(script).withMaxOperations(1000).execute()
+if (result.errorKind == ErrorKind.MAX_OPERATIONS) {
+    // handle the limit being hit
+}
+```
+  </TabItem>
+  <TabItem label="TypeScript">
+```typescript
+const result = KodiScript.builder(script).withMaxOperations(1000).execute();
+if (result.errorKind === 'max_operations') {
+    // handle the limit being hit
+}
+```
+  </TabItem>
+  <TabItem label="Dart">
+```dart
+final result = KodiScript.builder(script).withMaxOperations(1000).execute();
+if (result.errorKind == ErrorKind.maxOperations) {
+    // handle the limit being hit
+}
+```
+  </TabItem>
+  <TabItem label="PHP">
+```php
+$result = KodiScript::builder($script)->withMaxOperations(1000)->execute();
+if ($result->kind === ErrorKind::MaxOperations) {
+    // handle the limit being hit
+}
+```
+  </TabItem>
+</Tabs>
+
+## Best Practices
+
+- **Always set limits** when running untrusted code.
+- **Combine both**: use `maxOps` for deterministic protection against logic errors (loops) and `timeout` as a failsafe for heavy computation.
+- **Branch on the error kind**: check `result.errorKind` (`result.Kind` in Go, `$result->kind` in PHP) rather than parsing error message text. It is stable across versions and engines, while the message wording differs between SDKs.
+- **Sandbox by default**: scripts can only touch the variables and functions you explicitly inject. See [Extensibility](/language-guide/extensibility/) for scoping guidance.

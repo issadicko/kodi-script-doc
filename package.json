@@ -1,17 +1,36 @@
 {
-    "name": "kodi-script-docs",
-    "version": "1.0.0",
-    "scripts": {
-        "dev": "next dev",
-        "build": "next build",
-        "start": "next start"
-    },
-    "dependencies": {
-        "@next/third-parties": "^16.1.1",
-        "next": "^14.2.35",
-        "nextra": "^3.3.1",
-        "nextra-theme-docs": "^3.3.1",
-        "react": "^18.3.1",
-        "react-dom": "^18.3.1"
-    }
+  "name": "kodi-script-doc",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Documentation of KodiScript, a lightweight embeddable scripting language",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.42.6",
+    "@codemirror/autocomplete": "^6.20.4",
+    "@codemirror/commands": "^6.11.1",
+    "@codemirror/lang-json": "^6.0.2",
+    "@codemirror/language": "^6.13.1",
+    "@codemirror/lint": "^6.9.7",
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/view": "^6.43.15",
+    "@issadicko/kodi-script": "^0.4.0",
+    "@lezer/highlight": "^1.2.5",
+    "astro": "^7.4.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.11",
+    "typescript": "^6.0.3"
+  }
 }

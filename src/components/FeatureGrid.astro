@@ -1,0 +1,103 @@
+---
+/** Compact list of the language's selling points. */
+import { Icon } from '@astrojs/starlight/components';
+import nativesSource from '../content/docs/language-guide/native-functions.mdx?raw';
+import { parseNatives } from '../playground/natives';
+
+const nativeCount = parseNatives(nativesSource).length;
+
+const features = [
+  {
+    icon: 'pencil',
+    title: 'Familiar syntax',
+    text: 'let, fn, if, for, string templates, closures, and method chaining. It reads like JavaScript.',
+  },
+  {
+    icon: 'approve-check-circle',
+    title: 'Same result everywhere',
+    text: 'The five SDKs run one compliance suite, and output is canonical: a script prints the same lines on every host.',
+  },
+  {
+    icon: 'padlock',
+    title: 'Sandboxed by design',
+    text: 'A script only sees the variables and functions you inject, under limits on operations, time, and recursion.',
+  },
+  {
+    icon: 'open-book',
+    title: 'Batteries included',
+    text: `${nativeCount} native functions: strings, dates, grouping, JSON, regex, hashing, and higher-order helpers.`,
+  },
+  {
+    icon: 'puzzle',
+    title: 'Yours to extend',
+    text: 'Register host functions or bind whole objects, and keep full control over what scripts can reach.',
+  },
+  {
+    icon: 'laptop',
+    title: 'Runs in the browser too',
+    text: 'The TypeScript SDK has no runtime dependency. The playground runs scripts client-side.',
+  },
+];
+---
+
+<ul class="features not-content">
+  {
+    features.map((feature) => (
+      <li>
+        <span class="icon"><Icon name={feature.icon as 'pencil'} size="1.25rem" /></span>
+        <div>
+          <h3>{feature.title}</h3>
+          <p>{feature.text}</p>
+        </div>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .features {
+    display: grid;
+    gap: 1rem 1.5rem;
+    margin: 1.5rem 0;
+    padding: 0;
+    list-style: none;
+  }
+  @media (min-width: 40rem) {
+    .features {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 64rem) {
+    .features {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  li {
+    display: flex;
+    gap: 0.85rem;
+    align-items: flex-start;
+    padding: 1rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.5rem;
+    background: var(--sl-color-bg-nav);
+  }
+  .icon {
+    display: inline-flex;
+    flex: none;
+    padding: 0.5rem;
+    border-radius: 0.4rem;
+    background: var(--sl-color-accent-low);
+    color: var(--sl-color-text-accent);
+  }
+  h3 {
+    margin: 0 0 0.2rem;
+    font-size: var(--sl-text-base);
+    font-weight: 600;
+    color: var(--sl-color-white);
+  }
+  p {
+    margin: 0;
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-2);
+  }
+</style>

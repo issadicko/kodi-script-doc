@@ -1,0 +1,51 @@
+---
+/**
+ * Install command of an SDK, with the version from `src/versions.ts`.
+ * Kotlin takes `build`: `kts` (default), `groovy`, or `maven`.
+ */
+import { Code } from '@astrojs/starlight/components';
+import { versions, type Sdk } from '../versions';
+
+interface Props {
+  sdk: Sdk;
+  build?: 'kts' | 'groovy' | 'maven';
+}
+
+const { sdk, build = 'kts' } = Astro.props;
+
+const snippets = {
+  go: { lang: 'bash', code: `go get github.com/issadicko/kodi-script-go@${versions.go}` },
+  typescript: {
+    lang: 'bash',
+    code: `npm install @issadicko/kodi-script@${versions.typescript}`,
+  },
+  dart: {
+    lang: 'yaml',
+    title: 'pubspec.yaml',
+    code: `dependencies:\n  kodi_script: ${versions.dart}`,
+  },
+  php: { lang: 'bash', code: `composer require issadicko/kodi-script:${versions.php}` },
+} as const;
+
+const kotlin = {
+  kts: {
+    lang: 'kotlin',
+    title: 'build.gradle.kts',
+    code: `dependencies {\n    implementation("io.github.issadicko:kodi-script:${versions.kotlin}")\n}`,
+  },
+  groovy: {
+    lang: 'groovy',
+    title: 'build.gradle',
+    code: `implementation 'io.github.issadicko:kodi-script:${versions.kotlin}'`,
+  },
+  maven: {
+    lang: 'xml',
+    title: 'pom.xml',
+    code: `<dependency>\n    <groupId>io.github.issadicko</groupId>\n    <artifactId>kodi-script</artifactId>\n    <version>${versions.kotlin}</version>\n</dependency>`,
+  },
+} as const;
+
+const snippet = sdk === 'kotlin' ? kotlin[build] : snippets[sdk];
+---
+
+<Code code={snippet.code} lang={snippet.lang} title={'title' in snippet ? snippet.title : undefined} />

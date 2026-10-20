@@ -1,9 +1,0 @@
-services:
-  kodiscript-docs:
-    build: .
-    container_name: kodiscript-docs
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production

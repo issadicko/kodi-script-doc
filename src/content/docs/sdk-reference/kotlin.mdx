@@ -1,0 +1,161 @@
+---
+title: Kotlin SDK Reference
+description: "Install and use the KodiScript Kotlin SDK on the JVM and Spring Boot: run scripts, inject variables, register functions, set limits, and handle typed errors."
+---
+
+import { TabItem, Tabs } from '@astrojs/starlight/components';
+import Install from '../../../components/Install.astro';
+
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.issadicko/kodi-script)](https://central.sonatype.com/artifact/io.github.issadicko/kodi-script)
+
+## Installation
+
+<Tabs syncKey="kotlin-build">
+  <TabItem label="Gradle (Kotlin DSL)">
+    <Install sdk="kotlin" build="kts" />
+  </TabItem>
+  <TabItem label="Gradle (Groovy)">
+    <Install sdk="kotlin" build="groovy" />
+  </TabItem>
+  <TabItem label="Maven">
+    <Install sdk="kotlin" build="maven" />
+  </TabItem>
+</Tabs>
+
+## Quick Start
+
+```kotlin
+import com.kodi.script.KodiScript
+
+val result = KodiScript.run("""
+    let name = "World"
+    print("Hello " + name)
+""")
+
+result.output.forEach { println(it) }
+```
+
+`KodiScript.eval(source)` returns the script's final value and throws a `KodiScriptException` when the script fails.
+
+## Variable Injection
+
+```kotlin
+val variables = mapOf(
+    "user" to mapOf(
+        "name" to "Alice",
+        "role" to "admin"
+    )
+)
+
+val result = KodiScript.run("""
+    let greeting = "Hello " + user.name
+    let status = user?.active ?: "offline"
+    print(greeting)
+""", variables)
+```
+
+## Builder Pattern
+
+```kotlin
+val result = KodiScript.builder("""
+    let greeting = customGreet("World")
+    print(greeting)
+""")
+    .withVariable("version", 1.0)
+    .registerFunction("customGreet") { args ->
+        "Hello, ${args[0]}!"
+    }
+    .execute()
+```
+
+| Method | Description |
+|--------|-------------|
+| `withVariable(name, value)` / `withVariables(map)` | Inject variables |
+| `registerFunction(name) { args -> … }` | Register a custom native function |
+| `bind(name, obj)` | Bind an object so scripts can call its methods and read its properties |
+| `withMaxOperations(n)` | Cap the number of operations |
+| `withTimeout(ms)` | Cap wall-clock execution time, in milliseconds |
+| `withOutput { line -> … }` | Route each `print()` line to a callback (still captured) |
+| `withSilentPrint(true)` | Capture `print()` output without writing it to the console |
+| `withCache(false)` | Turn off AST caching (on by default) |
+| `execute()` | Run and return a `ScriptResult` |
+
+Numbers written in a script reach your functions as `Double`: convert with `(args[0] as Number).toLong()` when you need an integer.
+
+## Spring Boot Integration
+
+```kotlin
+@Service
+class ScriptService {
+    fun executeUserScript(script: String, context: Map<String, Any?>): ScriptResult {
+        return KodiScript.builder(script)
+            .withVariables(context)
+            .withMaxOperations(100_000)
+            .withTimeout(2_000)
+            .execute()
+    }
+}
+
+@RestController
+@RequestMapping("/api/scripts")
+class ScriptController(private val scriptService: ScriptService) {
+    @PostMapping("/execute")
+    fun execute(@RequestBody request: ScriptRequest): ScriptResult {
+        return scriptService.executeUserScript(request.script, request.context)
+    }
+}
+```
+
+Always set limits when the script comes from a user. See [Security & Limits](/language-guide/security/).
+
+## Result & Error Handling
+
+`execute()` returns a `ScriptResult`. Branch on the typed `errorKind` rather than parsing error strings:
+
+```kotlin
+data class ScriptResult(
+    val value: Any?,
+    val output: List<String>,
+    val errors: List<String>,
+    val errorKind: ErrorKind   // NONE on success
+) {
+    val hasErrors: Boolean
+}
+
+enum class ErrorKind { NONE, PARSE, RUNTIME, TIMEOUT, MAX_OPERATIONS }
+```
+
+```kotlin
+val result = KodiScript.builder(script)
+    .withMaxOperations(1000)
+    .execute()
+
+when (result.errorKind) {
+    ErrorKind.NONE -> useResult(result.value, result.output)
+    ErrorKind.PARSE -> /* syntax error */ Unit
+    ErrorKind.RUNTIME -> /* bad operation, undefined variable, recursion, ... */ Unit
+    ErrorKind.TIMEOUT -> /* exceeded withTimeout */ Unit
+    ErrorKind.MAX_OPERATIONS -> /* exceeded withMaxOperations */ Unit
+}
+```
+
+## Streaming & Capturing Output
+
+By default `print()` writes to stdout and is also captured in `result.output`. Use `withSilentPrint` to suppress the console write, or `withOutput` to route each line to a callback:
+
+```kotlin
+val lines = mutableListOf<String>()
+KodiScript.builder("""print("a") print("b")""")
+    .withOutput { line -> lines.add(line) }   // lines == ["a", "b"]
+    .execute()
+
+// Capture only, no console output:
+val result = KodiScript.builder(script)
+    .withSilentPrint(true)
+    .execute()
+```
+
+## Links
+
+- [GitHub Repository](https://github.com/issadicko/kodi-script-kotlin)
+- [Maven Central](https://central.sonatype.com/artifact/io.github.issadicko/kodi-script)

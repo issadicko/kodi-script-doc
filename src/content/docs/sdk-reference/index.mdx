@@ -1,0 +1,46 @@
+---
+title: SDK Reference
+description: "KodiScript SDKs for Go, Kotlin, TypeScript, Dart, and PHP: install versions, package registries, and how the host APIs compare."
+---
+
+import { LinkCard, CardGrid } from '@astrojs/starlight/components';
+import { versions } from '../../../versions';
+
+KodiScript provides native SDKs for seamless integration with your applications across multiple platforms. The language is the same in all of them: a script that runs in one SDK prints the same output in the others.
+
+<CardGrid>
+  <LinkCard title="Go SDK" href="/sdk-reference/go/" description="Backend services and CLI tools" />
+  <LinkCard title="Kotlin SDK" href="/sdk-reference/kotlin/" description="JVM, Spring Boot, Android" />
+  <LinkCard title="TypeScript SDK" href="/sdk-reference/typescript/" description="Node.js and the browser" />
+  <LinkCard title="Dart SDK" href="/sdk-reference/dart/" description="Flutter mobile, web, and desktop" />
+  <LinkCard title="PHP SDK" href="/sdk-reference/php/" description="Web backends and CMS integrations" />
+</CardGrid>
+
+## Package Registry
+
+| Language | Package | Version | Source |
+|----------|---------|---------|--------|
+| **Go** | [pkg.go.dev](https://pkg.go.dev/github.com/issadicko/kodi-script-go) | <code>{versions.go}</code> | [kodi-script-go](https://github.com/issadicko/kodi-script-go) |
+| **Kotlin** | [Maven Central](https://central.sonatype.com/artifact/io.github.issadicko/kodi-script) | <code>{versions.kotlin}</code> | [kodi-script-kotlin](https://github.com/issadicko/kodi-script-kotlin) |
+| **TypeScript** | [npm](https://www.npmjs.com/package/@issadicko/kodi-script) | <code>{versions.typescript}</code> | [kodi-script-ts](https://github.com/issadicko/kodi-script-ts) |
+| **Dart** | [pub.dev](https://pub.dev/packages/kodi_script) | <code>{versions.dart}</code> | [kodi-script-dart](https://github.com/issadicko/kodi-script-dart) |
+| **PHP** | [Packagist](https://packagist.org/packages/issadicko/kodi-script) | <code>{versions.php}</code> | [kodi-script-php](https://github.com/issadicko/kodi-script-php) |
+
+## API at a Glance
+
+The host APIs follow each language's conventions, but the same operations exist everywhere:
+
+| | Go | Kotlin | TypeScript | Dart | PHP |
+|---|---|---|---|---|---|
+| Run a script | `kodi.Run(src, vars)` | `KodiScript.run(src, vars)` | `KodiScript.run(src, vars)` | `KodiScript.run(src, variables:)` | `KodiScript::run($src, $vars)` |
+| Evaluate to a value | `kodi.Eval(src)` | `KodiScript.eval(src)` | n/a | `KodiScript.eval(src)` | `KodiScript::eval($src)` |
+| Builder | `kodi.New(src)` | `KodiScript.builder(src)` | `KodiScript.builder(src)` | `KodiScript.builder(src)` | `KodiScript::builder($src)` |
+| Inject variables | `WithVariables` | `withVariable(s)` | `withVariable(s)` | `withVariable(s)` | `withVariable(s)` |
+| Custom function | `RegisterFunction` | `registerFunction` | `registerFunction` | `registerFunction` | `registerFunction` |
+| Bind an object | `Bind` | `bind` | `bind` | `bind` (`KodiBindable`) | `bind` |
+| Operation limit | `WithMaxOperations` | `withMaxOperations` | `withMaxOperations` | `withMaxOperations` | `withMaxOperations` |
+| Timeout | `WithTimeout(duration)` | `withTimeout(ms)` | `withTimeout(ms)` | `withTimeout(Duration)` | `withTimeout(ms)` |
+| Output callback | `WithOutput` | `withOutput` | `withOutput` | `withOutput` | `withOutput` |
+| Error kind | `result.Kind` | `result.errorKind` | `result.errorKind` | `result.errorKind` | `$result->kind` |
+
+Every `print()` line is captured in the result's `output` list. Go, Kotlin, and TypeScript also write it to the console unless you silence it; Dart sends it to the developer log and PHP only captures it.

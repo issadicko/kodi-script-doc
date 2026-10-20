@@ -1,0 +1,168 @@
+---
+title: Variables & Data Types
+description: "Declare variables with let, and learn KodiScript's data types, string templates, arrays, objects, destructuring, and comments."
+---
+
+## Variables
+
+Variables are declared using `let`. They are dynamically typed.
+
+```kodi
+let x = 10
+let name = "Kodi"
+let isActive = true
+```
+
+A statement ends at the end of the line, and semicolons are optional. A line that ends with a binary operator (`+`, `&&`, …) continues on the next line:
+
+```kodi
+let a = 1; let b = 2
+let total = 10 +
+            20 +
+            30
+print(total)   // 60
+```
+
+Reassign a variable with `=`, or update it in place with a [compound assignment operator](/language-guide/operators/#compound-assignment) such as `+=`:
+
+```kodi
+let count = 0
+count = 5
+count += 1   // 6
+```
+
+Only variables are assignment targets. To change an array or an object, build a new one (with [spread](/language-guide/operators/#spread), `push`, or `concat`): native functions never modify their arguments.
+
+## Data Types
+
+### Primitives
+
+- **Number**: 64-bit floating point (e.g., `10`, `3.14`).
+- **String**: Text delimited by double quotes, single quotes, or backticks (e.g., `"Hello"`).
+- **Boolean**: `true` or `false`.
+- **Null**: `null`.
+
+### Number Formatting
+
+Numbers are stored as 64-bit floats, but whole numbers print **without** a trailing `.0`. This is part of a canonical output format that makes the same script print byte-for-byte identically across every SDK:
+
+```kodi
+print(42)       // 42     (not 42.0)
+print(3.5)      // 3.5
+print(10 / 4)   // 2.5
+print(10 / 2)   // 5      (not 5.0)
+```
+
+### String Literals
+
+Strings can be written with three interchangeable delimiters. Pick whichever avoids escaping:
+
+```kodi
+let a = "double quotes"
+let b = 'single quotes'
+let c = `backticks`
+```
+
+The escape sequences are `\n`, `\t`, `\r`, `\\`, `\"`, `\'`, `` \` ``, and `\$`.
+
+### String Templates
+
+Strings support interpolation using `${expression}` syntax, whichever delimiter they use.
+
+```kodi
+let name = "World"
+print("Hello ${name}!")   // Output: Hello World!
+
+let a = 10
+let b = 20
+print("Sum: ${a + b}")    // Output: Sum: 30
+
+// Escaping
+print("Price: \$100")     // Output: Price: $100
+```
+
+Concatenating a string with another value with `+` converts the other value to text: `"n=" + 5` is `n=5`.
+
+### Arrays
+
+Lists of values. Elements can be of mixed types. Reading an index that does not exist gives `null`. Arrays print as comma-separated values inside brackets:
+
+```kodi
+let list = [1, "two", true]
+print(list[0])   // 1
+print([1, 2, 3]) // [1, 2, 3]
+
+let nested = [[1, 2], [3, 4]]
+print(nested[1][0])   // 3
+print([][0])          // null
+```
+
+### Objects
+
+Key-value pairs (hash maps). Keys are written bare or as strings, and read with `.key` or `["key"]`. When printed, object keys are sorted alphabetically for stable, reproducible output:
+
+```kodi
+let person = {
+    name: "Alice",
+    age: 30
+}
+print(person["name"])
+print(person.age)
+
+print({b: 2, a: 1})   // {a: 1, b: 2}
+```
+
+### Multi-line Literals
+
+Array and object literals, and call arguments, can span several lines, with an optional trailing comma:
+
+```kodi
+let config = {
+    "retries": 3,
+    hosts: [
+        "a",
+        "b",
+    ],
+}
+print(config.retries)    // 3
+print(config.hosts[1])   // b
+```
+
+:::caution[Trailing commas in PHP]
+The Go, Kotlin, TypeScript, and Dart SDKs accept a trailing comma. The PHP SDK does not yet: drop the last comma in scripts that run on PHP. Splitting a literal over several lines works everywhere.
+:::
+
+## Destructuring
+
+Unpack arrays and objects into individual variables in a single `let` statement.
+
+**Array destructuring** binds by position:
+
+```kodi
+let [first, second] = [100, 200]
+print(first)    // 100
+print(second)   // 200
+```
+
+**Object destructuring** binds by key name:
+
+```kodi
+let {x, y} = {x: 7, y: 3}
+print(x * y)   // 21
+```
+
+## Comments
+
+Both line and block comments are supported:
+
+```kodi
+// this is a line comment
+
+let result = 5 /* inline block comment */ + 5
+print(result)   // 10
+
+/*
+  Block comments
+  can span multiple lines.
+*/
+```

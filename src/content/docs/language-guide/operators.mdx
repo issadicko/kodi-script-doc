@@ -1,0 +1,174 @@
+---
+title: Operators
+description: "Arithmetic, comparison, logical, compound assignment, ternary, null-safe, and spread operators in KodiScript."
+---
+
+KodiScript supports a familiar set of operators for arithmetic, comparison, logic, assignment, and null-safety.
+
+## Arithmetic
+
+| Operator | Description | Example | Result |
+|----------|-------------|---------|--------|
+| `+` | Addition (or string concatenation) | `2 + 3` | `5` |
+| `-` | Subtraction | `5 - 2` | `3` |
+| `*` | Multiplication | `4 * 3` | `12` |
+| `/` | Division | `10 / 4` | `2.5` |
+| `%` | Modulo (remainder) | `10 % 3` | `1` |
+| `-x` | Negation | `-(-10)` | `10` |
+
+```kodi
+print(10 + 2 * 3 - 4 / 2)   // 14  (standard precedence)
+print("Hello " + "World")   // Hello World
+print("Value: " + 42)       // Value: 42
+```
+
+When one side of `+` is a string, the other side is converted to text.
+
+:::note[Division by zero]
+Division by zero raises a runtime error (`division by zero` / `modulo by zero`) rather than returning `Infinity` or `NaN`. This keeps behaviour identical across every SDK.
+:::
+
+## Comparison
+
+| Operator | Description |
+|----------|-------------|
+| `==` | Equal to |
+| `!=` | Not equal to |
+| `>` | Greater than |
+| `<` | Less than |
+| `>=` | Greater than or equal |
+| `<=` | Less than or equal |
+
+```kodi
+print(5 > 3)                  // true
+print(5 == 5)                 // true
+print(5 != 3)                 // true
+print("hello" == "hello")     // true
+```
+
+## Logical
+
+| Operator | Description |
+|----------|-------------|
+| `&&` | Logical AND |
+| `\|\|` | Logical OR |
+| `!` | Logical NOT |
+
+```kodi
+print(true && false)   // false
+print(true || false)   // true
+print(!true)           // false
+```
+
+Only `null` and `false` are falsy. Every other value, including `0`, `""`, and empty collections, is truthy.
+
+## Compound Assignment
+
+Update a variable in place. `x += y` is shorthand for `x = x + y`.
+
+| Operator | Equivalent |
+|----------|------------|
+| `+=` | `x = x + y` |
+| `-=` | `x = x - y` |
+| `*=` | `x = x * y` |
+| `/=` | `x = x / y` |
+
+```kodi
+let x = 10
+x += 5    // 15
+x -= 2    // 13
+x *= 2    // 26
+x /= 13   // 2
+print(x)  // 2
+```
+
+## Increment & Decrement
+
+```kodi
+let n = 5
+n++       // 6
+n++       // 7
+n--       // 6
+print(n)  // 6
+```
+
+These are commonly used with `while` loops:
+
+```kodi
+let counter = 0
+while (true) {
+    counter++
+    if (counter >= 4) { break }
+}
+print(counter)  // 4
+```
+
+## Ternary Operator
+
+A concise `condition ? valueIfTrue : valueIfFalse` expression. Ternaries are right-associative, so they nest naturally into if / else-if chains:
+
+```kodi
+fn classify(n) {
+    return n > 0 ? "positive" : n < 0 ? "negative" : "zero"
+}
+
+print(classify(5))   // positive
+print(classify(-3))  // negative
+print(classify(0))   // zero
+```
+
+## Null-Safety
+
+KodiScript has first-class support for working with values that may be `null`.
+
+### Optional Chaining `?.`
+
+Safely access a property. If the receiver is `null`, the whole expression evaluates to `null` instead of raising an error:
+
+```kodi
+let user = {status: "online"}
+print(user?.status)    // online
+
+let missing = null
+print(missing?.status) // null  (no error)
+
+let data = {user: {profile: {city: "Paris"}}}
+print(data?.user?.profile?.city)   // Paris
+```
+
+### Null-Coalescing `?:`
+
+Provide a fallback when the left-hand side is `null`. Other falsy values such as `false` and `0` are kept:
+
+```kodi
+let missing = null
+print(missing ?: "default")   // default
+
+let name = "Kodi"
+print(name ?: "anonymous")    // Kodi
+
+print(false ?: "x")           // false
+```
+
+The two combine cleanly for defaulting nested lookups:
+
+```kodi
+let user = {name: "Kodi"}
+let status = user?.active ?: "offline"
+print(status)   // offline
+```
+
+## Spread
+
+Expand an array (with `...`) into another array literal or into a function call's arguments.
+
+```kodi
+let a = [1, 2]
+let b = [3, 4]
+print([...a, ...b, 5])   // [1, 2, 3, 4, 5]
+
+fn add3(x, y, z) { return x + y + z }
+print(add3(...[10, 20, 30]))   // 60
+```
+
+See [Variables](/language-guide/variables/#destructuring) for the inverse operation: destructuring.

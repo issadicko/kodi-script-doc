@@ -1,0 +1,188 @@
+---
+title: Portable Embeddable Scripting Language
+description: "A lightweight, portable scripting language for Go, Kotlin, TypeScript, Dart, and PHP. Embed custom logic safely with sandboxed execution and cross-platform support."
+template: splash
+hero:
+  title: Portable scripting for modern apps
+  tagline: Embed one small, sandboxed language in your Go, Kotlin, TypeScript, Dart, or PHP app. Same script, same result, on every host.
+  actions:
+    - text: Get started
+      link: getting-started/
+      icon: right-arrow
+    - text: Open the playground
+      link: playground/
+      variant: secondary
+---
+
+import { TabItem, Tabs } from '@astrojs/starlight/components';
+import FeatureGrid from '../../components/FeatureGrid.astro';
+import Install from '../../components/Install.astro';
+import Showcase from '../../components/Showcase.astro';
+
+## See it run
+
+A script reads like JavaScript and runs the same in every SDK. This one groups sales by region, and the result next to it is what the engine produced when this page was built.
+
+<Showcase />
+
+## Install
+
+Pick the SDK that matches your host language:
+
+<Tabs syncKey="sdk">
+  <TabItem label="Go">
+    <Install sdk="go" />
+  </TabItem>
+  <TabItem label="Kotlin">
+    <Install sdk="kotlin" />
+  </TabItem>
+  <TabItem label="TypeScript">
+    <Install sdk="typescript" />
+  </TabItem>
+  <TabItem label="Dart">
+    <Install sdk="dart" />
+  </TabItem>
+  <TabItem label="PHP">
+    <Install sdk="php" />
+  </TabItem>
+</Tabs>
+
+Then follow [Getting Started](/getting-started/) for a first script.
+
+## Why KodiScript
+
+<FeatureGrid />
+
+## Embed it in your app
+
+Hand a script its data, give it the host functions you choose, cap what it may spend, and read the result. Each SDK follows its own language's conventions:
+
+<Tabs syncKey="sdk">
+  <TabItem label="Go">
+```go
+result := kodi.New(`
+    let discount = customer.tier == "gold" ? 20 : 5
+    notify(customer.email, "Your discount: " + discount + "%")
+    return discount
+`).
+    WithVariables(map[string]interface{}{
+        "customer": map[string]interface{}{"tier": "gold", "email": "awa@example.com"},
+    }).
+    RegisterFunction("notify", func(args ...interface{}) (interface{}, error) {
+        fmt.Printf("-> %v: %v\n", args[0], args[1])
+        return true, nil
+    }).
+    WithMaxOperations(10000).
+    WithTimeout(time.Second).
+    Execute()
+
+if result.Kind != kodi.ErrorKindNone {
+    log.Println("script failed:", result.Errors)
+    return
+}
+fmt.Println(result.Value) // 20
+```
+  </TabItem>
+  <TabItem label="Kotlin">
+```kotlin
+val result = KodiScript.builder("""
+    let discount = customer.tier == "gold" ? 20 : 5
+    notify(customer.email, "Your discount: " + discount + "%")
+    return discount
+""")
+    .withVariable("customer", mapOf("tier" to "gold", "email" to "awa@example.com"))
+    .registerFunction("notify") { args ->
+        println("-> ${args[0]}: ${args[1]}")
+        true
+    }
+    .withMaxOperations(10_000)
+    .withTimeout(1_000)
+    .execute()
+
+if (result.errorKind != ErrorKind.NONE) {
+    println("script failed: ${result.errors}")
+    return
+}
+println(result.value) // 20.0
+```
+  </TabItem>
+  <TabItem label="TypeScript">
+```typescript
+const result = KodiScript.builder(`
+    let discount = customer.tier == "gold" ? 20 : 5
+    notify(customer.email, "Your discount: " + discount + "%")
+    return discount
+`)
+  .withVariable('customer', { tier: 'gold', email: 'awa@example.com' })
+  .registerFunction('notify', (to, message) => {
+    console.log(`-> ${to}: ${message}`);
+    return true;
+  })
+  .withMaxOperations(10_000)
+  .withTimeout(1_000)
+  .execute();
+
+if (result.errorKind !== 'none') {
+  console.error('script failed:', result.errors);
+} else {
+  console.log(result.value); // 20
+}
+```
+  </TabItem>
+  <TabItem label="Dart">
+```dart
+final result = KodiScript.builder('''
+    let discount = customer.tier == "gold" ? 20 : 5
+    notify(customer.email, "Your discount: " + discount + "%")
+    return discount
+''')
+    .withVariable('customer', {'tier': 'gold', 'email': 'awa@example.com'})
+    .registerFunction('notify', (args) {
+      print('-> ${args[0]}: ${args[1]}');
+      return true;
+    })
+    .withMaxOperations(10000)
+    .withTimeout(Duration(seconds: 1))
+    .execute();
+
+if (result.errorKind != ErrorKind.none) {
+  print('script failed: ${result.errors}');
+  return;
+}
+print(result.value); // 20.0
+```
+  </TabItem>
+  <TabItem label="PHP">
+```php
+$result = KodiScript::builder('
+    let discount = customer.tier == "gold" ? 20 : 5
+    notify(customer.email, "Your discount: " + discount + "%")
+    return discount
+')
+    ->withVariable('customer', ['tier' => 'gold', 'email' => 'awa@example.com'])
+    ->registerFunction('notify', function ($to, $message) {
+        echo "-> $to: $message\n";
+        return true;
+    })
+    ->withMaxOperations(10000)
+    ->withTimeout(1000)
+    ->execute();
+
+if ($result->kind !== ErrorKind::None) {
+    echo 'script failed: ', implode('; ', $result->errors), "\n";
+    return;
+}
+echo $result->value, "\n"; // 20
+```
+  </TabItem>
+</Tabs>
+
+Learn more in [Extensibility](/language-guide/extensibility/) and [Security & Limits](/language-guide/security/), or read the [SDK reference](/sdk-reference/) for your platform.
+
+## What people build with it
+
+- **Workflow engines**: let users define custom automation logic.
+- **Rule-based systems**: configurable business rules.
+- **Template processing**: dynamic content generation.
+- **Game scripting**: modding and custom game logic.
+- **API transformations**: transform data between services.

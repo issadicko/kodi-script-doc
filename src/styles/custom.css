@@ -1,0 +1,33 @@
+/* Brand blue accent (#0070f3, hue 212). Raw #0070f3 gives 4.55:1 on white and 4.24:1 on the
+   sidebar background, so light mode uses a darker shade of the same hue (5.1:1 and 4.8:1). */
+:root {
+  --sl-color-accent-low: #122c49;
+  --sl-color-accent: #3392ff;
+  --sl-color-accent-high: #a3ceff;
+}
+
+:root[data-theme='light'] {
+  --sl-color-accent-low: #cfe4fc;
+  --sl-color-accent: #0069e0;
+  --sl-color-accent-high: #0f488a;
+}
+
+/* Home page: no hero image, so the hero is centred instead of leaving an empty right column. */
+@media (min-width: 50rem) {
+  :root[data-has-hero] .hero {
+    grid-template-columns: 100%;
+    padding-block: clamp(2rem, calc(1rem + 6vmin), 6rem);
+  }
+  :root[data-has-hero] .hero .stack {
+    text-align: center;
+  }
+  :root[data-has-hero] .hero .copy {
+    align-items: center;
+  }
+  :root[data-has-hero] .hero .copy > * {
+    max-width: 44ch;
+  }
+  :root[data-has-hero] .hero .actions {
+    justify-content: center;
+  }
+}

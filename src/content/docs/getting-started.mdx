@@ -1,0 +1,133 @@
+---
+title: Getting Started with KodiScript
+description: "Learn how to integrate KodiScript, the portable embeddable scripting language, into your Go, Kotlin, Dart, TypeScript, or PHP applications with our quick start guides."
+---
+
+import { TabItem, Tabs } from '@astrojs/starlight/components';
+import Install from '../../components/Install.astro';
+
+Pick the SDK that matches your host language. The language is the same everywhere, so what you learn here carries over.
+
+## Quick Start
+
+<Tabs syncKey="sdk">
+  <TabItem label="Go">
+    <Install sdk="go" />
+
+```go
+package main
+
+import (
+    "fmt"
+    kodi "github.com/issadicko/kodi-script-go"
+)
+
+func main() {
+    result := kodi.Run(`print("Hello from Go!")`, nil)
+    fmt.Println(result.Output[0])
+}
+```
+  </TabItem>
+  <TabItem label="Kotlin">
+    Add the dependency to your `build.gradle.kts`:
+
+    <Install sdk="kotlin" />
+
+```kotlin
+import com.kodi.script.KodiScript
+
+fun main() {
+    val result = KodiScript.run("""print("Hello from Kotlin!")""")
+    println(result.output[0])
+}
+```
+  </TabItem>
+  <TabItem label="TypeScript">
+    <Install sdk="typescript" />
+
+```typescript
+import { KodiScript } from '@issadicko/kodi-script';
+
+const result = KodiScript.run('print("Hello from TypeScript!")');
+console.log(result.output[0]);
+```
+  </TabItem>
+  <TabItem label="Dart">
+    Add the dependency to your `pubspec.yaml`:
+
+    <Install sdk="dart" />
+
+```dart
+import 'package:kodi_script/kodi_script.dart';
+
+void main() {
+  final result = KodiScript.run('print("Hello from Dart!")');
+  print(result.output.first);
+}
+```
+  </TabItem>
+  <TabItem label="PHP">
+    <Install sdk="php" />
+
+```php
+use KodiScript\KodiScript;
+
+$result = KodiScript::run('print("Hello from PHP!")');
+echo $result->output[0];
+```
+  </TabItem>
+</Tabs>
+
+Every SDK returns a result with the lines the script printed (`output`), the value of its last expression (`value`), and the errors it raised, if any. [Error kinds](/language-guide/security/#typed-error-kinds) tell a syntax error from a runtime error or a limit being hit.
+
+## Pass Data In
+
+Variables you inject are visible to the script. A script reads them like any other variable:
+
+<Tabs syncKey="sdk">
+  <TabItem label="Go">
+```go
+result := kodi.Run(`print("Hello " + user.name)`, map[string]interface{}{
+    "user": map[string]interface{}{"name": "Alice"},
+})
+```
+  </TabItem>
+  <TabItem label="Kotlin">
+```kotlin
+val result = KodiScript.run("""print("Hello " + user.name)""", mapOf(
+    "user" to mapOf("name" to "Alice")
+))
+```
+  </TabItem>
+  <TabItem label="TypeScript">
+```typescript
+const result = KodiScript.run('print("Hello " + user.name)', {
+  user: { name: 'Alice' },
+});
+```
+  </TabItem>
+  <TabItem label="Dart">
+```dart
+final result = KodiScript.run(
+  'print("Hello " + user.name)',
+  variables: {'user': {'name': 'Alice'}},
+);
+```
+  </TabItem>
+  <TabItem label="PHP">
+```php
+$result = KodiScript::run('print("Hello " + user.name)', [
+    'user' => ['name' => 'Alice'],
+]);
+```
+  </TabItem>
+</Tabs>
+
+To let scripts call your own code, see [Extensibility](/language-guide/extensibility/). To run scripts you did not write, set [limits](/language-guide/security/).
+
+## Next Steps
+
+- Run scripts in your browser in the [Playground](/playground/).
+- Learn the syntax in the [Language Guide](/language-guide/variables/).
+- Browse the built-in [native functions](/language-guide/native-functions/).
+- Read the reference for your platform in the [SDK Reference](/sdk-reference/).

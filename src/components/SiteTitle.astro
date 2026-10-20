@@ -1,0 +1,33 @@
+---
+/**
+ * Site wordmark: KODI in bold, SCRIPT in regular weight and the accent colour, like the logo.
+ * Text instead of an image so it follows the light/dark theme without a second file.
+ */
+const { siteTitleHref } = Astro.locals.starlightRoute;
+---
+
+<a href={siteTitleHref} class="site-title" aria-label="KodiScript" translate="no">
+  <span class="kodi">KODI</span><span class="script">SCRIPT</span>
+</a>
+
+<style>
+  @layer starlight.core {
+    .site-title {
+      display: flex;
+      align-items: center;
+      font-size: var(--sl-text-h4);
+      letter-spacing: 0.06em;
+      line-height: 1;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .kodi {
+      font-weight: 800;
+      color: var(--sl-color-white);
+    }
+    .script {
+      font-weight: 400;
+      color: var(--sl-color-text-accent);
+    }
+  }
+</style>

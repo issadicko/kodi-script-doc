@@ -1,0 +1,194 @@
+---
+/**
+ * Playground: a full-screen editor outside the docs layout. The engine is the TypeScript SDK,
+ * which runs in the page; the Explorer lists the natives read from the native-functions page.
+ */
+import pkg from '@issadicko/kodi-script/package.json';
+import nativesSource from '../content/docs/language-guide/native-functions.mdx?raw';
+import { examples } from '../playground/examples';
+import { parseNatives } from '../playground/natives';
+import '../styles/playground.css';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const site = Astro.site ?? new URL('https://issadicko.github.io');
+const canonical = new URL(Astro.url.pathname, site).href;
+const image = `${site.origin}${base}/og.png`;
+const title = 'Playground – KodiScript';
+const description =
+  'Run KodiScript in your browser: edit a script and its variables, browse the native functions, and see the result. The TypeScript SDK runs entirely client-side.';
+
+const natives = parseNatives(nativesSource);
+const payload = JSON.stringify({ examples, natives, engineVersion: pkg.version }).replace(/</g, '\\u003c');
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
+    <meta name="author" content="Issa Dicko" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content="KodiScript" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={image} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={image} />
+    <script is:inline>
+      // Same theme choice as the docs: Starlight stores it under `starlight-theme`.
+      (function () {
+        var choice = '';
+        try {
+          choice = localStorage.getItem('starlight-theme') || '';
+        } catch (error) {}
+        document.documentElement.dataset.theme =
+          choice === 'light' || choice === 'dark'
+            ? choice
+            : matchMedia('(prefers-color-scheme: light)').matches
+              ? 'light'
+              : 'dark';
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="app" data-app>
+      <header class="topbar">
+        <a class="brand" href={`${base}/`} title="Back to the documentation">
+          <span class="kodi">KODI</span><span class="script">SCRIPT</span>
+        </a>
+        <span class="crumb">Playground</span>
+
+        <button type="button" class="tool" data-explorer-toggle aria-controls="pg-explorer" aria-expanded="true">
+          <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16"><path d="M2 3h12v1.6H2zm0 4.2h12v1.6H2zm0 4.2h8v1.6H2z" fill="currentColor"></path></svg>
+          Explorer
+        </button>
+
+        <label class="example">
+          <span class="sr-only">Example script</span>
+          <select data-example>
+            <option value="" hidden>Your script</option>
+            {examples.map((example) => <option value={example.id}>{example.title}</option>)}
+          </select>
+        </label>
+
+        <button type="button" class="run" data-run title="Run (Ctrl/Cmd + Enter)">
+          <svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14"><path d="M4 2.5v11l9-5.5z" fill="currentColor"></path></svg>
+          Run <kbd>Ctrl/Cmd + Enter</kbd>
+        </button>
+        <button type="button" class="tool" data-share title="Copy a link that holds the script, the variables, and the settings">
+          <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16"><path d="M6.6 9.4a2.8 2.8 0 0 0 4 0l2.4-2.4a2.8 2.8 0 0 0-4-4l-.9.9M9.4 6.6a2.8 2.8 0 0 0-4 0L3 9a2.8 2.8 0 0 0 4 4l.9-.9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
+          Share
+        </button>
+
+        <span class="spacer"></span>
+        <a class="engine" href="https://www.npmjs.com/package/@issadicko/kodi-script" title="SDK that runs your script">
+          @issadicko/kodi-script <span data-engine>{pkg.version}</span>
+        </a>
+        <a class="tool plain" href={`${base}/`}>Docs</a>
+        <button type="button" class="tool icon" data-theme-toggle aria-label="Change theme">
+          <svg class="icon-auto" aria-hidden="true" viewBox="0 0 16 16" width="16" height="16"><circle cx="8" cy="8" r="5.2" fill="none" stroke="currentColor" stroke-width="1.4"></circle><path d="M8 2.8a5.2 5.2 0 0 0 0 10.4z" fill="currentColor"></path></svg>
+          <svg class="icon-light" aria-hidden="true" viewBox="0 0 16 16" width="16" height="16"><circle cx="8" cy="8" r="2.8" fill="currentColor"></circle><path d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M3.4 12.6l1.1-1.1M11.5 4.5l1.1-1.1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
+          <svg class="icon-dark" aria-hidden="true" viewBox="0 0 16 16" width="16" height="16"><path d="M12.8 9.6A5.4 5.4 0 0 1 6.4 3.2a5.4 5.4 0 1 0 6.4 6.4z" fill="currentColor"></path></svg>
+        </button>
+      </header>
+
+      <div class="workspace" data-workspace>
+        <aside class="explorer" id="pg-explorer" aria-label="Native functions">
+          <div class="explorer-head">
+            <label class="sr-only" for="pg-explorer-search">Filter native functions</label>
+            <input
+              id="pg-explorer-search"
+              type="search"
+              placeholder="Filter functions"
+              autocomplete="off"
+              spellcheck="false"
+              data-explorer-search
+            />
+            <p class="count" data-explorer-count aria-live="polite"></p>
+          </div>
+          <div class="explorer-list" data-explorer-list></div>
+        </aside>
+        <div
+          class="sep"
+          data-sep="explorer"
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Resize the Explorer"
+          tabindex="0"
+        >
+        </div>
+
+        <main class="editor-col" data-editor-column>
+          <section class="script-pane" aria-label="Script">
+            <div class="host" data-script-host></div>
+          </section>
+          <div
+            class="sep horizontal"
+            data-sep="bottom"
+            role="separator"
+            aria-orientation="horizontal"
+            aria-label="Resize the Variables and Settings panel"
+            tabindex="0"
+          >
+          </div>
+          <section class="bottom" aria-label="Variables and settings">
+            <div class="tabs" role="tablist" aria-label="Panel">
+              <button type="button" role="tab" id="pg-tab-variables" aria-controls="pg-panel-variables" aria-selected="true" data-tab="variables">Variables</button>
+              <button type="button" role="tab" id="pg-tab-settings" aria-controls="pg-panel-settings" aria-selected="false" tabindex="-1" data-tab="settings">Settings</button>
+            </div>
+            <div class="panel" id="pg-panel-variables" role="tabpanel" aria-labelledby="pg-tab-variables">
+              <div class="host" data-variables-host></div>
+              <p class="message" data-variables-message role="alert" hidden></p>
+            </div>
+            <div class="panel settings" id="pg-panel-settings" role="tabpanel" aria-labelledby="pg-tab-settings" hidden>
+              <div class="fields">
+                <label>
+                  <span>Max operations</span>
+                  <input type="number" inputmode="numeric" min="1" max="100000000" step="1000" data-setting="maxOperations" />
+                </label>
+                <label>
+                  <span>Timeout (ms)</span>
+                  <input type="number" inputmode="numeric" min="1" max="30000" step="100" data-setting="timeoutMs" />
+                </label>
+                <button type="button" class="tool" data-reset-settings>Reset to defaults</button>
+              </div>
+              <p class="message" data-settings-message role="alert" hidden></p>
+              <p class="note">
+                A run stops when it reaches either limit. The script runs in this page, so keep the timeout short.
+              </p>
+            </div>
+          </section>
+        </main>
+
+        <div
+          class="sep"
+          data-sep="result"
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Resize the result pane"
+          tabindex="0"
+        >
+        </div>
+        <section class="result" aria-label="Result">
+          <div class="result-head">
+            <h1 class="sr-only">Run result</h1>
+            <span class="status" data-status data-kind="idle" role="status">Ready</span>
+          </div>
+          <div class="result-body" data-result aria-live="polite"></div>
+        </section>
+      </div>
+    </div>
+
+    <p class="toast" data-toast role="status" hidden></p>
+    <script type="application/json" id="pg-data" set:html={payload} />
+    <script>
+      import '../playground/app';
+    </script>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+---
+/**
+ * Page content. Astro does not prefix `base` to internal links written in Markdown or passed to
+ * components (LinkCard, Card...). Authors write them as `/path/` and this component adds the base
+ * when the page renders. With `base: '/'` (custom domain) it changes nothing.
+ */
+import '@astrojs/starlight/style/markdown.css';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+let html = await Astro.slots.render('default');
+
+if (base) {
+  html = html.replace(
+    /(<(?:a|img)\s[^>]*?\b(?:href|src)=")(\/[^"]*)"/g,
+    (match, head: string, path: string) =>
+      path.startsWith('//') || path === base || path.startsWith(`${base}/`)
+        ? match
+        : `${head}${base}${path}"`,
+  );
+}
+---
+
+<div class="sl-markdown-content"><Fragment set:html={html} /></div>

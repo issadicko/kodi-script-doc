@@ -1,0 +1,125 @@
+---
+title: Control Flow
+description: "Conditionals, for and while loops, break and continue, return, and try/catch error handling in KodiScript."
+---
+
+## If / Else / Else If
+
+Conditional execution works as expected, and conditions can be chained with `else if`. The condition is wrapped in parentheses:
+
+```kodi
+let score = 75
+
+if (score >= 90) {
+    print("A")
+} else if (score >= 70) {
+    print("B")
+} else {
+    print("C")
+}
+// Output: B
+```
+
+For simple value selection, the [ternary operator](/language-guide/operators/#ternary-operator) is often more concise.
+
+## For Loops
+
+Iterate over arrays using the `for ... in` syntax:
+
+```kodi
+let numbers = [1, 2, 3, 4]
+
+for (n in numbers) {
+    print(n * 2)
+}
+```
+
+`for` iterates over arrays. To loop over an object, iterate its `keys` or its `entries`:
+
+```kodi
+let prices = {tea: 2, coffee: 3}
+for (name in keys(prices)) {
+    print("${name}: ${prices[name]}")
+}
+```
+
+## While Loops
+
+Execute a block of code repeatedly while a condition is true:
+
+```kodi
+let i = 0
+let sum = 0
+while (i < 5) {
+    sum += i
+    i++
+}
+print(sum)  // Output: 10
+```
+
+:::caution[Safety note]
+Loops are protected by the operation limit. If a loop runs for too many iterations, execution is terminated to prevent infinite loops. See [Security & Limits](/language-guide/security/) for more details.
+:::
+
+## Break & Continue
+
+Inside `for` and `while` loops, `break` exits the loop immediately and `continue` skips to the next iteration:
+
+```kodi
+let total = 0
+for (i in [1, 2, 3, 4, 5]) {
+    if (i == 3) { continue }   // skip 3
+    if (i == 5) { break }      // stop before 5
+    total += i
+}
+print(total)   // Output: 7  (1 + 2 + 4)
+```
+
+## Return Statements
+
+Functions can return values using `return`. If no return statement is found, the result of the last expression is returned (implicit return), but explicit `return` is supported for early exit.
+
+```kodi
+let check = fn(x) {
+    if (x < 0) {
+        return "negative"
+    }
+    return "positive"
+}
+print(check(5))   // positive
+```
+
+A top-level `return` stops the script and makes its value the result.
+
+## Try / Catch
+
+Wrap code that might fail in a `try` block and handle the failure in `catch`. The caught error is bound to the name you provide in parentheses:
+
+```kodi
+fn safeDiv(p, q) {
+    try {
+        return p / q
+    } catch (e) {
+        return -1
+    }
+}
+
+print(safeDiv(10, 2))   // 5
+print(safeDiv(10, 0))   // -1  (division by zero was caught)
+```
+
+`try`/`catch` also catches runtime errors such as accessing an undefined variable:
+
+```kodi
+let captured = "none"
+try {
+    let bad = undefinedThing
+} catch (e) {
+    captured = "caught"
+}
+print(captured)   // caught
+```
+
+:::note[Portability]
+The error value bound in `catch` carries a human-readable message. The exact text, in particular whether it is prefixed with a source position like `line X, col Y:`, can vary between SDKs. If you need byte-identical output across every engine, avoid printing the raw error and emit a fixed marker instead (as shown above).
+:::

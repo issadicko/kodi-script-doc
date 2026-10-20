@@ -1,0 +1,136 @@
+---
+title: PHP SDK
+description: "Install and use the KodiScript PHP SDK: run scripts, inject variables, register functions, bind objects, set limits, and handle typed errors."
+---
+
+import Install from '../../../components/Install.astro';
+
+[![Latest Stable Version](https://poser.pugx.org/issadicko/kodi-script/v)](https://packagist.org/packages/issadicko/kodi-script)
+
+The PHP SDK for KodiScript provides a sandboxed scripting engine for PHP applications. It requires PHP 8.1 or later.
+
+## Installation
+
+<Install sdk="php" />
+
+## Quick Start
+
+```php
+use KodiScript\KodiScript;
+
+// Simple evaluation
+$result = KodiScript::eval('2 + 3 * 4');
+echo $result; // 14
+
+// With variables
+$result = KodiScript::run('greeting + " " + name', [
+    'greeting' => 'Hello',
+    'name' => 'World',
+]);
+echo $result->value; // "Hello World"
+```
+
+## API Reference
+
+### `KodiScript::run(source, variables?)`
+
+Runs a script with optional variables and returns a `ScriptResult`.
+
+```php
+$result = KodiScript::run('x + y', ['x' => 10, 'y' => 20]);
+echo $result->value;      // 30
+print_r($result->output); // list of print() lines
+print_r($result->errors); // list of error messages
+```
+
+### `KodiScript::eval(source, variables?)`
+
+Evaluates a script and returns the result value directly. Throws on error.
+
+```php
+$value = KodiScript::eval('abs(-5) * 2');
+echo $value; // 10
+```
+
+### `KodiScript::builder(source)`
+
+Creates a builder for advanced configuration.
+
+```php
+$result = KodiScript::builder('greet("PHP")')
+    ->withVariable('version', '8.2')
+    ->registerFunction('greet', fn($name) => "Hello, $name!")
+    ->withMaxOperations(1000)
+    ->withTimeout(5000)  // 5 seconds
+    ->execute();
+```
+
+## Builder Methods
+
+| Method | Description |
+|--------|-------------|
+| `withVariable(name, value)` | Add a single variable |
+| `withVariables(array)` | Add multiple variables |
+| `registerFunction(name, fn)` | Register a custom function |
+| `bind(name, object)` | Bind an object to the script |
+| `withOutput(callable)` | Route each `print()` line to a callback (still captured) |
+| `withMaxOperations(n)` | Limit max operations (loop protection) |
+| `withTimeout(ms)` | Set execution timeout in milliseconds |
+
+`print()` output is captured in `$result->output`; PHP does not echo it.
+
+## Custom Functions
+
+Register PHP functions that can be called from scripts:
+
+```php
+$result = KodiScript::builder('
+    let total = calculatePrice(10, 99.99, 15)
+    print("Total: " + total)
+')
+    ->registerFunction('calculatePrice', function($qty, $price, $discount) {
+        return $qty * $price * (1 - $discount / 100);
+    })
+    ->execute();
+```
+
+Numbers written in a script arrive as PHP `float`s. A bound object's method that declares an `int` parameter rejects them: declare `int|float` and cast.
+
+## Native Functions
+
+All the [native functions](/language-guide/native-functions/) of the language are available: strings, math, arrays and higher-order helpers, grouping, dates, JSON, encoding, regex, and hashing.
+
+They also work with method-call syntax, in the script: `items.groupBy("type")` is `groupBy(items, "type")`, and `"2026-10-19".addDays(1)` is `addDays("2026-10-19", 1)`.
+
+## Error Handling
+
+```php
+$result = KodiScript::run('undefined_variable');
+
+if ($result->hasErrors()) {
+    foreach ($result->errors as $error) {
+        echo "Error: $error\n";
+    }
+}
+```
+
+Branch on the typed `kind` (an `ErrorKind` enum) instead of parsing error strings:
+
+```php
+use KodiScript\ErrorKind;
+
+$result = KodiScript::builder($script)->withMaxOperations(1000)->execute();
+
+match ($result->kind) {
+    ErrorKind::None          => handleSuccess($result->value),
+    ErrorKind::Parse         => /* syntax error */ null,
+    ErrorKind::Runtime       => /* bad operation, undefined variable, recursion, ... */ null,
+    ErrorKind::Timeout       => /* exceeded withTimeout */ null,
+    ErrorKind::MaxOperations => /* exceeded withMaxOperations */ null,
+};
+```
+
+## Links
+
+- [GitHub Repository](https://github.com/issadicko/kodi-script-php)
+- [Packagist](https://packagist.org/packages/issadicko/kodi-script)

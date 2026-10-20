@@ -1,0 +1,114 @@
+---
+title: Functions
+description: "Function expressions, named declarations, closures, higher-order functions, method-call syntax, and spread arguments in KodiScript."
+---
+
+Functions are first-class citizens in KodiScript. Use the `fn` keyword to define them.
+
+## Function Expressions
+
+Assign an anonymous function to a variable with `let`:
+
+```kodi
+let add = fn(x, y) {
+    return x + y
+}
+print(add(2, 3))   // 5
+```
+
+## Named Function Declarations
+
+You can also declare a named function directly. This is equivalent to the `let` form but reads more naturally. A named function can call itself (recursion), and can call functions declared after it, as long as they are declared before the call runs:
+
+```kodi
+fn fib(n) {
+    if (n < 2) { return n }
+    return fib(n - 1) + fib(n - 2)
+}
+
+print(fib(10))   // 55
+```
+
+## Implicit Return
+
+A function without a `return` statement gives the value of its last expression. Use an explicit `return` for an early exit:
+
+```kodi
+let double = fn(x) { x * 2 }
+print(double(21))   // 42
+
+let check = fn(x) {
+    if (x < 0) {
+        return "negative"
+    }
+    return "positive"
+}
+print(check(-1))    // negative
+```
+
+## Closures
+
+Functions capture variables from their surrounding scope:
+
+```kodi
+let makeAdder = fn(x) {
+    return fn(y) {
+        return x + y
+    }
+}
+
+let addTwo = makeAdder(2)
+print(addTwo(3)) // Output: 5
+```
+
+## Higher Order Functions
+
+You can pass functions as arguments:
+
+```kodi
+let apply = fn(f, val) {
+    return f(val)
+}
+
+let double = fn(x) { x * 2 }
+
+print(apply(double, 10)) // Output: 20
+```
+
+KodiScript ships with a full set of built-in higher-order helpers for collections: `map`, `filter`, `reduce`, `find`, `findIndex`, `some`, `every`, and `flatMap`. [Grouping functions](/language-guide/native-functions/#grouping-and-aggregation) such as `groupBy` and `sumBy` take a function too.
+
+```kodi
+let nums = [1, 2, 3, 4, 5]
+
+print(nums.map(fn(x){ x * 2 }))         // [2, 4, 6, 8, 10]
+print(nums.filter(fn(x){ x % 2 == 0 })) // [2, 4]
+print(reduce(nums, fn(acc, x){ acc + x }, 0))  // 15
+print(find(nums, fn(x){ x > 3 }))       // 4
+print(some(nums, fn(x){ x > 4 }))       // true
+print(every(nums, fn(x){ x > 0 }))      // true
+print(flatMap([1, 2], fn(x){ [x, x * 10] }))   // [1, 10, 2, 20]
+```
+
+## Method-Call Syntax
+
+Any built-in function whose first argument is the "receiver" can be called with method syntax, and calls can be chained. `value.method(args)` is equivalent to `method(value, args)`:
+
+```kodi
+print("  Hello World  ".trim().toUpperCase())   // HELLO WORLD
+print([3, 1, 2].sort().join(","))               // 1,2,3
+print([1, 2, 3].map(fn(x){ x * 2 }))            // [2, 4, 6]
+print([1, 1, 2, 3].unique().sum())              // 6
+```
+
+This works for the full [native function](/language-guide/native-functions/) library: string helpers, array helpers, date helpers, and the higher-order functions above.
+
+## Spread Arguments
+
+Use the [spread operator](/language-guide/operators/#spread) to expand an array into a function's argument list:
+
+```kodi
+fn add3(x, y, z) { return x + y + z }
+
+let values = [10, 20, 30]
+print(add3(...values))   // 60
+```

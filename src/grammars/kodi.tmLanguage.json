@@ -1,0 +1,269 @@
+{
+  "name": "kodi",
+  "scopeName": "source.kodi",
+  "fileTypes": [
+    "kodi"
+  ],
+  "patterns": [
+    {
+      "include": "#comment"
+    },
+    {
+      "include": "#string"
+    },
+    {
+      "include": "#number"
+    },
+    {
+      "include": "#function-declaration"
+    },
+    {
+      "include": "#keyword"
+    },
+    {
+      "include": "#constant"
+    },
+    {
+      "include": "#operator"
+    },
+    {
+      "include": "#call"
+    },
+    {
+      "include": "#property"
+    },
+    {
+      "include": "#punctuation"
+    }
+  ],
+  "repository": {
+    "comment": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.kodi",
+          "match": "//.*$",
+          "captures": {
+            "0": {
+              "name": "punctuation.definition.comment.kodi"
+            }
+          }
+        },
+        {
+          "name": "comment.block.kodi",
+          "begin": "/\\*",
+          "end": "\\*/",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.begin.kodi"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.end.kodi"
+            }
+          }
+        }
+      ]
+    },
+    "string": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.kodi",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "include": "#escape"
+            },
+            {
+              "include": "#template"
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.kodi",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "include": "#escape"
+            },
+            {
+              "include": "#template"
+            }
+          ]
+        },
+        {
+          "name": "string.template.kodi",
+          "begin": "`",
+          "end": "`",
+          "patterns": [
+            {
+              "include": "#escape"
+            },
+            {
+              "include": "#template"
+            }
+          ]
+        }
+      ]
+    },
+    "escape": {
+      "name": "constant.character.escape.kodi",
+      "match": "\\\\."
+    },
+    "template": {
+      "name": "meta.template.expression.kodi",
+      "begin": "\\$\\{",
+      "end": "\\}",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.template-expression.begin.kodi"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.template-expression.end.kodi"
+        }
+      },
+      "contentName": "meta.embedded.line.kodi",
+      "patterns": [
+        {
+          "include": "#braces"
+        },
+        {
+          "include": "$self"
+        }
+      ]
+    },
+    "braces": {
+      "begin": "\\{",
+      "end": "\\}",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.block.begin.kodi"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.block.end.kodi"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#braces"
+        },
+        {
+          "include": "$self"
+        }
+      ]
+    },
+    "number": {
+      "name": "constant.numeric.kodi",
+      "match": "\\b[0-9]+(?:\\.[0-9]+)?\\b"
+    },
+    "function-declaration": {
+      "match": "\\b(fn)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+      "captures": {
+        "1": {
+          "name": "storage.type.function.kodi"
+        },
+        "2": {
+          "name": "entity.name.function.kodi"
+        }
+      }
+    },
+    "keyword": {
+      "patterns": [
+        {
+          "name": "storage.type.function.kodi",
+          "match": "\\bfn\\b"
+        },
+        {
+          "name": "storage.type.kodi",
+          "match": "\\blet\\b"
+        },
+        {
+          "name": "keyword.control.kodi",
+          "match": "\\b(?:if|else|for|in|while|return|break|continue|try|catch)\\b"
+        }
+      ]
+    },
+    "constant": {
+      "patterns": [
+        {
+          "name": "constant.language.boolean.kodi",
+          "match": "\\b(?:true|false)\\b"
+        },
+        {
+          "name": "constant.language.null.kodi",
+          "match": "\\bnull\\b"
+        }
+      ]
+    },
+    "operator": {
+      "patterns": [
+        {
+          "name": "keyword.operator.null-safe.kodi",
+          "match": "\\?\\.|\\?:"
+        },
+        {
+          "name": "keyword.operator.spread.kodi",
+          "match": "\\.\\.\\."
+        },
+        {
+          "name": "keyword.operator.assignment.compound.kodi",
+          "match": "\\+=|-=|\\*=|/="
+        },
+        {
+          "name": "keyword.operator.increment-decrement.kodi",
+          "match": "\\+\\+|--"
+        },
+        {
+          "name": "keyword.operator.comparison.kodi",
+          "match": "==|!=|<=|>=|<|>"
+        },
+        {
+          "name": "keyword.operator.logical.kodi",
+          "match": "&&|\\|\\||!"
+        },
+        {
+          "name": "keyword.operator.assignment.kodi",
+          "match": "="
+        },
+        {
+          "name": "keyword.operator.arithmetic.kodi",
+          "match": "[+\\-*/%]"
+        },
+        {
+          "name": "keyword.operator.ternary.kodi",
+          "match": "[?:]"
+        }
+      ]
+    },
+    "call": {
+      "name": "entity.name.function.kodi",
+      "match": "\\b[A-Za-z_][A-Za-z0-9_]*(?=\\s*\\()"
+    },
+    "property": {
+      "match": "(?<=[^.]\\.|^\\.)[A-Za-z_][A-Za-z0-9_]*",
+      "name": "variable.other.property.kodi"
+    },
+    "punctuation": {
+      "patterns": [
+        {
+          "name": "punctuation.separator.comma.kodi",
+          "match": ","
+        },
+        {
+          "name": "punctuation.terminator.statement.kodi",
+          "match": ";"
+        },
+        {
+          "name": "punctuation.accessor.kodi",
+          "match": "\\."
+        }
+      ]
+    }
+  }
+}
