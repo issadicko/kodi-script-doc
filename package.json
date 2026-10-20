@@ -32,5 +32,8 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.11",
     "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "postcss-nested": "^9.0.0"
   }
 }

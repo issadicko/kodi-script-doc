@@ -16,6 +16,8 @@ npm run preview   # serves dist/ under the base path
 npm run check     # astro check: types, content frontmatter, components
 ```
 
+`overrides` in `package.json` forces `postcss-nested` 9: `@expressive-code/core` (through Starlight) still asks for 6, whose `postcss-selector-parser` 6 is flagged by `npm audit` (GHSA-rj75-hqrm-r3gf). Remove the override once `@expressive-code/core` depends on a fixed version.
+
 ## Structure
 
 | Path | Content |
